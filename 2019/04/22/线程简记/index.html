@@ -1,0 +1,207 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>线程简记 - 朝阳的博客</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Sunny,"> 
+    <meta name="description" content="多线程五状态
+新建状态  
+就绪状态  
+运行状态  
+等待/阻塞/睡眠状态  
+死亡状态
+
+线程优先级&amp;emsp;&amp;emsp;Java多线程存在优先级的概念，优先级范围是在1~10之间。线程调度程,"> 
+    <meta name="author" content="Sunny___"> 
+    <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">朝阳的博客</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yoursite.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">线程简记</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">线程简记</h1>
+        <div class="stuff">
+            <span>四月 22, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/线程/">线程</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/线程方法/">线程方法</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <h2 id="多线程五状态"><a href="#多线程五状态" class="headerlink" title="多线程五状态"></a>多线程五状态</h2><ul>
+<li>新建状态  </li>
+<li>就绪状态  </li>
+<li>运行状态  </li>
+<li>等待/阻塞/睡眠状态  </li>
+<li>死亡状态</li>
+</ul>
+<h2 id="线程优先级"><a href="#线程优先级" class="headerlink" title="线程优先级"></a>线程优先级</h2><p>&emsp;&emsp;Java多线程存在优先级的概念，优先级范围是在1~10之间。线程调度程序在大多数情况下是根据优先级的抢先调度机制。正常情况下正在运行的线程的优先级会大于等于线程池中的任意线程的优先级。<br>&emsp;&emsp;之所以说是大多数情况，因为优先级操作没有保障，它只是有很大的概率会执行优先级大的线程，但也会先执行到优先级低的。所以只能讲优先级作为一种提高效率的手段，但不能使程序依赖优先级操作。</p>
+<h2 id="线程方法概念"><a href="#线程方法概念" class="headerlink" title="线程方法概念"></a>线程方法概念</h2><blockquote>
+<h4 id="sleep-long-millis"><a href="#sleep-long-millis" class="headerlink" title="sleep(long millis)"></a>sleep(long millis)</h4></blockquote>
+<ul>
+<li>强制当前线程进行休眠</li>
+</ul>
+<p>使当前正在执行的线程进入休眠，时间由millis(毫秒)决定。时间到期后线程进入就绪状态，等待线程调度程序选中后再继续执行。</p>
+<blockquote>
+<p>wait()</p>
+</blockquote>
+<ul>
+<li>使线程进入等待状态并释放锁，直到被其他线程唤醒</li>
+</ul>
+<p>Object.wait()方法必须与synchronized()一起使用，该方法是针对已经获得锁的线程进行操作。作用是将当前运行的线程暂停并释放锁，只有当其他线程调用了notify()或notifyAll()方法之后才会唤醒这个等待的线程。</p>
+<blockquote>
+<h4 id="yield"><a href="#yield" class="headerlink" title="yield()"></a>yield()</h4></blockquote>
+<ul>
+<li>暂停当前正在执行的线程，并执行其他线程</li>
+</ul>
+<p>yield()方法其实是让线程回到可运行的状态，让具有相同优先级的其他线程获得运行机会，不是真正意义上的暂停。有可能再次选中让步的线程。</p>
+<blockquote>
+<h4 id="join"><a href="#join" class="headerlink" title="join()"></a>join()</h4></blockquote>
+<ul>
+<li>停止主线程的执行,等待子线程结束</li>
+</ul>
+<p>join()由子线程调用，当子线程执行join()后主线程就会停止继续向下执行,直到子线程执行结束后，主线程才可以继续向下执行。</p>
+<blockquote>
+<h4 id="interrupt"><a href="#interrupt" class="headerlink" title="interrupt()"></a>interrupt()</h4></blockquote>
+<ul>
+<li>中断线程</li>
+</ul>
+<p>该方法是强制让线程终止。若线程打开了某个资源还未关闭就执行了interrupt()方法，将会导致资源无法关闭。</p>
+<blockquote>
+<h4 id="setPriority"><a href="#setPriority" class="headerlink" title="setPriority()"></a>setPriority()</h4></blockquote>
+<ul>
+<li>设置线程优先级</li>
+</ul>
+<p>该方法会修改线程优先级，使其能获得更多的执行机会。<br>Thread的三个内置的优先级常量如下：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MIN_PRIORITY = 1  </span><br><span class="line">NORM_PRIORITY = 5  (默认)</span><br><span class="line">MAX_PRIORITY = 10</span><br></pre></td></tr></table></figure>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#多线程五状态"><span class="toc-number">1.</span> <span class="toc-text">多线程五状态</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程优先级"><span class="toc-number">2.</span> <span class="toc-text">线程优先级</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程方法概念"><span class="toc-number">3.</span> <span class="toc-text">线程方法概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#sleep-long-millis"><span class="toc-number">3.0.1.</span> <span class="toc-text">sleep(long millis)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#yield"><span class="toc-number">3.0.2.</span> <span class="toc-text">yield()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#join"><span class="toc-number">3.0.3.</span> <span class="toc-text">join()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#interrupt"><span class="toc-number">3.0.4.</span> <span class="toc-text">interrupt()</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#setPriority"><span class="toc-number">3.0.5.</span> <span class="toc-text">setPriority()</span></a></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
