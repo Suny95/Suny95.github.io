@@ -7,20 +7,20 @@
   
   
   
-  <title>线程同步与锁 | 朝阳的博客</title>
+  <title>多线程笔记 (二) 线程同步与锁 | 朝阳的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="线程同步与锁： 线程同步方法、锁基本概念">
+  <meta name="description" content="多线程笔记 (二) 线程同步与锁： 线程同步方法、锁基本概念">
 <meta name="keywords" content="线程,锁,同步">
 <meta property="og:type" content="article">
-<meta property="og:title" content="线程同步与锁">
-<meta property="og:url" content="http://yoursite.com/2019/04/24/线程同步与锁/index.html">
+<meta property="og:title" content="多线程笔记 (二) 线程同步与锁">
+<meta property="og:url" content="http://yoursite.com/2019/04/24/多线程笔记 (二) 线程同步与锁/index.html">
 <meta property="og:site_name" content="朝阳的博客">
-<meta property="og:description" content="线程同步与锁： 线程同步方法、锁基本概念">
+<meta property="og:description" content="多线程笔记 (二) 线程同步与锁： 线程同步方法、锁基本概念">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-24T09:06:04.651Z">
+<meta property="og:updated_time" content="2019-04-25T06:51:21.776Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="线程同步与锁">
-<meta name="twitter:description" content="线程同步与锁： 线程同步方法、锁基本概念">
+<meta name="twitter:title" content="多线程笔记 (二) 线程同步与锁">
+<meta name="twitter:description" content="多线程笔记 (二) 线程同步与锁： 线程同步方法、锁基本概念">
   
   
     <link rel="icon" href="/img/favicon.png">
@@ -177,7 +177,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/同步/" style="font-size: 10px;">同步</a> <a href="/tags/线程/" style="font-size: 20px;">线程</a> <a href="/tags/线程方法/" style="font-size: 10px;">线程方法</a> <a href="/tags/锁/" style="font-size: 10px;">锁</a>
+                        <a href="/tags/同步/" style="font-size: 10px;">同步</a> <a href="/tags/线程/" style="font-size: 20px;">线程</a> <a href="/tags/线程方法/" style="font-size: 10px;">线程方法</a> <a href="/tags/锁/" style="font-size: 15px;">锁</a>
                     </div>
                 </section>
                 
@@ -232,10 +232,10 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-线程同步与锁" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-多线程笔记 (二) 线程同步与锁" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/04/24/线程同步与锁/" class="article-date">
+      <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" class="article-date">
       <time datetime="2019-04-24T05:38:21.000Z" itemprop="datePublished">2019-04-24</time>
 </a>
 
@@ -250,7 +250,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      线程同步与锁
+      多线程笔记 (二) 线程同步与锁
     </h1>
   
 
@@ -276,7 +276,7 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p><strong> 线程同步与锁：</strong> <excerpt in index | 首页摘要><br>线程同步方法、锁基本概念<br><a id="more"></a></excerpt></p>
+        <p><strong> 多线程笔记 (二) 线程同步与锁：</strong> <excerpt in index | 首页摘要><br>线程同步方法、锁基本概念<br><a id="more"></a></excerpt></p>
 <the rest of contents | 余下全文>
 
 <h2 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h2><p>本文参考地址: <a href="http://cmsblogs.com/?p=1278" target="_blank" rel="noopener">Java多线程 (五) — 线程的同步与锁</a></p>
@@ -293,7 +293,7 @@
 <li>同步损害并发性能，应尽可能缩小范围，也就是尽量使用同步代码块，而不是同步方法。</li>
 </ol>
 <h2 id="线程锁"><a href="#线程锁" class="headerlink" title="线程锁"></a>线程锁</h2><ul>
-<li><h4 id="锁原理"><a href="#锁原理" class="headerlink" title="锁原理"></a>锁原理</h4><p>&emsp;&emsp;Java中每个对象都有一个内置锁。当程序运行到非静态的，由synchronized修饰的同步方法时，自动获得正在执行代码类的当前实例锁。同理，同步代码块获取锁的方式也与其一致。</p>
+<li><h4 id="锁介绍"><a href="#锁介绍" class="headerlink" title="锁介绍"></a>锁介绍</h4><p>&emsp;&emsp;Java中每个对象都有一个内置锁。当程序运行到非静态的，由synchronized修饰的同步方法时，自动获得正在执行代码类的当前实例锁。同理，同步代码块获取锁的方式也与其一致。</p>
 <p>&emsp;&emsp;一个对象只有一个锁，所以当一个线程获取到该对象锁后，其他线程将无法再获取此锁，直至第一个线程释放锁。也正是这个机制，所以才可以保证同步方法可以在多线程环境下可以正确的执行期望的逻辑顺序。</p>
 </li>
 </ul>
@@ -331,13 +331,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/04/24/线程同步与锁/">线程同步与锁</a></p>
+        <p><span>本文标题:</span><a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/">多线程笔记 (二) 线程同步与锁</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Sunny___ 的个人博客">Sunny___</a></p>
         <p><span>发布时间:</span>2019年04月24日 - 13时38分</p>
-        <p><span>最后更新:</span>2019年04月24日 - 17时06分</p>
+        <p><span>最后更新:</span>2019年04月25日 - 14时51分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/04/24/线程同步与锁/" title="线程同步与锁">http://yoursite.com/2019/04/24/线程同步与锁/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/24/线程同步与锁/　　作者: Sunny___" title></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" title="多线程笔记 (二) 线程同步与锁">http://yoursite.com/2019/04/24/多线程笔记 (二) 线程同步与锁/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/24/多线程笔记 (二) 线程同步与锁/　　作者: Sunny___" title></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target="_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -348,9 +348,18 @@
 
 <nav id="article-nav">
   
+    <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          多线程笔记 (三) 线程锁原理
+        
+      </div>
+    </a>
   
-    <a href="/2019/04/22/线程简记/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">线程简记</div>
+  
+    <a href="/2019/04/22/多线程笔记 (一) 线程简记/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">多线程笔记 (一) 线程简记</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -362,7 +371,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程同步"><span class="toc-number">1.</span> <span class="toc-text">线程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#关于同步，有以下几个要点："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">关于同步，有以下几个要点：</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#线程锁"><span class="toc-number">2.</span> <span class="toc-text">线程锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#锁原理"><span class="toc-number">2.0.1.</span> <span class="toc-text">锁原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#关于锁，有以下几个要点："><span class="toc-number">2.0.1.1.</span> <span class="toc-text">关于锁，有以下几个要点：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#阻塞"><span class="toc-number">2.0.2.</span> <span class="toc-text">阻塞</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#当考虑阻塞时-应关注如下几点"><span class="toc-number">2.0.2.1.</span> <span class="toc-text">当考虑阻塞时,应关注如下几点:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程同步总结"><span class="toc-number">3.</span> <span class="toc-text">线程同步总结</span></a></li>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程同步"><span class="toc-number">1.</span> <span class="toc-text">线程同步</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#关于同步，有以下几个要点："><span class="toc-number">1.0.0.1.</span> <span class="toc-text">关于同步，有以下几个要点：</span></a></li></ol></li></ol><li class="toc-item toc-level-2"><a class="toc-link" href="#线程锁"><span class="toc-number">2.</span> <span class="toc-text">线程锁</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#锁介绍"><span class="toc-number">2.0.1.</span> <span class="toc-text">锁介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#关于锁，有以下几个要点："><span class="toc-number">2.0.1.1.</span> <span class="toc-text">关于锁，有以下几个要点：</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#阻塞"><span class="toc-number">2.0.2.</span> <span class="toc-text">阻塞</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#当考虑阻塞时-应关注如下几点"><span class="toc-number">2.0.2.1.</span> <span class="toc-text">当考虑阻塞时,应关注如下几点:</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程同步总结"><span class="toc-number">3.</span> <span class="toc-text">线程同步总结</span></a></li>
 </div>
 <style>
     .left-col .switch-btn {
@@ -423,16 +432,18 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+            <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="上一篇: 多线程笔记 (三) 线程锁原理">
+                <i class="fa fa-angle-left"></i>
+            </a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2019/04/22/线程简记/" title="下一篇: 线程简记">
+            <a href="/2019/04/22/多线程笔记 (一) 线程简记/" title="下一篇: 多线程笔记 (一) 线程简记">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/24/线程同步与锁/">线程同步与锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/22/线程简记/">线程简记</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/25/多线程笔记 (三) 线程锁原理/">多线程笔记 (三) 线程锁原理</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/24/多线程笔记 (二) 线程同步与锁/">多线程笔记 (二) 线程同步与锁</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/22/多线程笔记 (一) 线程简记/">多线程笔记 (一) 线程简记</a></li></ul>
     
 <script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
 
