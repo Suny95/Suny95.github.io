@@ -7,25 +7,20 @@
   
   
   
-  <title>多线程笔记 (三) 线程锁原理 | 朝阳的博客</title>
+  <title>多线程笔记 (四) 线程池介绍 | 朝阳的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
-<meta name="keywords" content="线程,锁">
+  <meta name="description" content="多线程笔记 (四) 线程池介绍： JDK提供的线程池介绍">
+<meta name="keywords" content="线程,线程池">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多线程笔记 (三) 线程锁原理">
-<meta property="og:url" content="http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/index.html">
+<meta property="og:title" content="多线程笔记 (四) 线程池介绍">
+<meta property="og:url" content="http://yoursite.com/2019/04/26/多线程笔记 (四) 线程池介绍/index.html">
 <meta property="og:site_name" content="朝阳的博客">
-<meta property="og:description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
+<meta property="og:description" content="多线程笔记 (四) 线程池介绍： JDK提供的线程池介绍">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9A1CC714D7B3466E86CA2829E319754C/11384">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/14AE75F3FA674E62B629247A3D05E2A1/11382">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/E51C96AE0A84432BB74986BEBB746FBB/11386">
-<meta property="og:updated_time" content="2019-04-25T07:24:55.262Z">
+<meta property="og:updated_time" content="2019-04-26T09:50:01.164Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="多线程笔记 (三) 线程锁原理">
-<meta name="twitter:description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
-<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377">
+<meta name="twitter:title" content="多线程笔记 (四) 线程池介绍">
+<meta name="twitter:description" content="多线程笔记 (四) 线程池介绍： JDK提供的线程池介绍">
   
   
     <link rel="icon" href="/img/favicon.png">
@@ -237,11 +232,11 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-多线程笔记 (三) 线程锁原理" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-多线程笔记 (四) 线程池介绍" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" class="article-date">
-      <time datetime="2019-04-25T05:38:21.000Z" itemprop="datePublished">2019-04-25</time>
+      <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" class="article-date">
+      <time datetime="2019-04-26T06:18:55.000Z" itemprop="datePublished">2019-04-26</time>
 </a>
 
     </div>
@@ -255,7 +250,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      多线程笔记 (三) 线程锁原理
+      多线程笔记 (四) 线程池介绍
     </h1>
   
 
@@ -271,7 +266,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程池/">线程池</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -281,55 +276,87 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p><strong> 多线程笔记 (三) 线程锁原理：</strong> <excerpt in index | 首页摘要><br>线程锁原理介绍<br><a id="more"></a></excerpt></p>
+        <p><strong> 多线程笔记 (四) 线程池介绍：</strong> <excerpt in index | 首页摘要><br>JDK提供的线程池介绍<br><a id="more"></a></excerpt></p>
 <the rest of contents | 余下全文>
 
-<p>本文参考地址：<a href="http://cmsblogs.com/?p=4586" target="_blank" rel="noopener">Java中的锁原理、锁优化、CAS、AQS详解！</a></p>
-<h2 id="锁原理详解"><a href="#锁原理详解" class="headerlink" title="锁原理详解"></a>锁原理详解</h2><h4 id="1-为什么要用锁"><a href="#1-为什么要用锁" class="headerlink" title="1. 为什么要用锁"></a>1. 为什么要用锁</h4><p>锁是为了解决并发操作引起的脏读、数据不一致的问题。</p>
-<h4 id="2-锁实现的基本原理"><a href="#2-锁实现的基本原理" class="headerlink" title="2. 锁实现的基本原理"></a>2. 锁实现的基本原理</h4><h5 id="2-1-synchronized实现原理"><a href="#2-1-synchronized实现原理" class="headerlink" title="2.1 synchronized实现原理"></a>2.1 synchronized实现原理</h5><blockquote>
-<p>synchronized是基于Monitor来实现同步的</p>
-</blockquote>
-<p>Monitor从两个方面来支持线程之间的同步:</p>
-<ul>
-<li>互斥执行</li>
-<li>协作</li>
-</ul>
+
+<p>本文参考地址: <a href="http://cmsblogs.com/?p=1284" target="_blank" rel="noopener">Java线程池使用说明</a></p>
+<h2 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h2><p>线程池的作用：限制系统中执行线程的数量。</p>
+<p>可以根据系统的环境情况，自动或手动设置线程数量，达到运行的最佳效果。用线程池控制线程数量，其他线程排队等候。一个任务执行完毕，再从队列中取最前面的任务开始执行。若队列中没有等待进程，线程池的这一资源处于等待。当一个新任务需要运行时，如果线程池中有等待的工作线程，就开始运行，否则进入等待队列。</p>
+<blockquote>
+<h4 id="为什么要用线程池："><a href="#为什么要用线程池：" class="headerlink" title="为什么要用线程池："></a>为什么要用线程池：</h4></blockquote>
 <ol>
-<li><p>Java使用对象锁保证工作在共享的数据集上的线程互斥执行。</p>
-</li>
-<li><p>使用notify、notifyAll、wait方法来协同不同线程之间的工作。</p>
-</li>
-<li><p>Class和Object都关联了一个Monitor。</p>
-</li>
+<li>减少创建和销毁线程的次数，每个工作线程可以被重复使用，可执行多个任务。</li>
+<li>可以根据系统配置调整线程池中工作线程的数目，防止消耗过多内存而把服务器累垮(每个线程大约1M内存)。</li>
 </ol>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377" alt="image"></p>
+<p>Executor：执行线程的工具<br>ExecutorService：线程池接口<br>ScheduleExecutorService：任务调度线程池，解决需重复执行的任务。<br>ThreadPoolExecutor：ExecutorService默认实现<br>ScheduledThreadPoolExecutor：周期性任务调度类</p>
+<blockquote>
+<h4 id="JDK提供的常用线程池"><a href="#JDK提供的常用线程池" class="headerlink" title="JDK提供的常用线程池"></a>JDK提供的常用线程池</h4></blockquote>
 <ul>
-<li>线程进入同步方法中。</li>
-<li>为了继续执行临界区代码，线程必须获取Monitor锁，若获取锁成功，将成为该监视者对象的拥有者，任意时刻内，监视者对象只属于一个活动线程(The Owner)</li>
-<li>拥有监视者对象的线程可以调用wait()进入等待集合(wait set)，同时释放监视锁，进入等待状态。</li>
-<li>其他线程调用notify、notifyAll方法唤醒等待集合中的线程，这些等待的线程需要重新获取监视锁后才能执行wait()之后的代码。</li>
-<li>同步方法执行完毕后，线程退出临界区，并释放监视锁。</li>
+<li>Executors.newSingleThreadExecutor</li>
 </ul>
 <blockquote>
-<p>synchronized具体实现</p>
+<p>创建单线程的线程池。这个线程池只有一个线程在工作。如果这个线程因为异常结束，那么就会有一个新的线程来替代它。此线程池保证所有任务的执行顺序按照任务提交顺序执行。</p>
 </blockquote>
-<ol>
-<li>同步代码块才用monitorenter、monitorexit指令显示的实现。</li>
-<li>同步方法则使用ACC_SYNCHRONIZED标记符隐式的实现。(JDK 1.6 / JDK 1.7  JDK1.8的环境下没发现标记)</li>
-</ol>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9A1CC714D7B3466E86CA2829E319754C/11384" alt="image"></p>
-<p>上图是使用了同步代码块的方法反编译后的字节码内容，monitorenter获取对象锁，monitorexit释放锁。</p>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/14AE75F3FA674E62B629247A3D05E2A1/11382" alt="image"></p>
-<p>上图是我从其他地方复制过来的，我自己用的JDK8是没发现这个标记的。还没发现是否有改动过。</p>
-<h5 id="monitorenter"><a href="#monitorenter" class="headerlink" title="monitorenter"></a>monitorenter</h5><p>每一个对象都有一个monitor，一个monitor只能被一个线程持有。当一个线程执行到monitorenter命令时会常识获取相对应对象的monitor，获取规则估下：</p>
-<ol>
-<li>如果monitor的进入数为0，则该线程可以进入monitor，并将monitor进入数设置为1，该线程即为monitor的持有者。</li>
-<li>如果当前线程已经拥有monitor，只是重新进入，则monitor的进入数加1，所以synchronized实现的锁是可重入锁。</li>
-<li>如果monitor已被其他线程持有，则当前线程进入阻塞状态，直到monitor的进入数为0，再重新获取monitor。</li>
-</ol>
-<h5 id="monitorexit"><a href="#monitorexit" class="headerlink" title="monitorexit"></a>monitorexit</h5><p>只有持有相应对象的monitor的线程才能执行monitorexit指令。每执行一次该指令monitor进入数减1，当进入数为0时当前线程释放monitor，此时其他阻塞的线程将可以尝试获取该monitor。</p>
-<h4 id="3-锁存放位置"><a href="#3-锁存放位置" class="headerlink" title="3. 锁存放位置"></a>3. 锁存放位置</h4><p>锁标记存放在Java对象头的Mark Word中。线程获取锁也就是去修改Mark Word；若修改成功，则代表获取锁，否则未获取锁。</p>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/E51C96AE0A84432BB74986BEBB746FBB/11386" alt="image"></p>
+<ul>
+<li>Executors.newFixThreadPool</li>
+</ul>
+<blockquote>
+<p>创建固定大小的线程池。每次提交任务都新建一个线程。直到线程达到线程池的最大大小。线程池的大小一旦达到最大值就会保持不变，若某个线程因为异常而结束，那么线程池会补充一个新线程。</p>
+</blockquote>
+<ul>
+<li>Executors.newCachedThreadPool</li>
+</ul>
+<blockquote>
+<p>创建一个可缓存的线程池。如果线程池大小超过了处理任务所需要的线程，那么就会回收部分空闲（60秒不执行任务）的线程，当任务数增加是，线程池又可以智能的添加新线程处理任务。此线程池不会对线程池大小做限制，其大小完全依赖于JVM能够创建的最大线程数。</p>
+</blockquote>
+<ul>
+<li>Executors.newScheduleThreadPool</li>
+</ul>
+<blockquote>
+<p>创建一个大小无限的线程池。此线程池支持定时及周期性执行任务的需求。</p>
+</blockquote>
+<blockquote>
+<h4 id="ThreadPoolExecotor参数详解"><a href="#ThreadPoolExecotor参数详解" class="headerlink" title="ThreadPoolExecotor参数详解"></a>ThreadPoolExecotor参数详解</h4></blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ThreadPoolExecutor(<span class="keyword">int</span> corePoolSize, <span class="keyword">int</span> maximumPoolSize, <span class="keyword">long</span> keepAliveTime, TimeUnit unit, BlockingQueue&lt;Runnable&gt; workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler)</span><br></pre></td></tr></table></figure>
+<p>corePoolSize：池中所保存的线程数，包括空闲线程</p>
+<p>maximumPoolSize：池中允许的最大线程数</p>
+<p>keepAliveTime：当线程数大于corePoolSize时，空闲线程等待任务最大时间</p>
+<p>unit：keepAliveTime参数时间单位</p>
+<p>workQueue：执行前用于保持任务的队列。此队列仅保持由execute方法提交的Runnable任务</p>
+<p>threadFactory：执行程序创建新线程时使用的工厂</p>
+<p>handler：由于超出线程范围和队列容量而被阻塞时所使用的处理程序（拒绝策略）</p>
+<blockquote>
+<h4 id="BlockingQueue"><a href="#BlockingQueue" class="headerlink" title="BlockingQueue"></a>BlockingQueue</h4></blockquote>
+<p>blockingQueue，顾名思义，就是阻塞队列。所有的BlockingQueue都可用于传输和保持提交的请求。可以使用此队列与池大小进行交互：如果运行的线程少于corePoolSize，则Executor始终首选是新建线程直接开始执行请求，而不是将请求放入Queue中排队。若运行的线程大于等于corePoolSize，则Executor始终首选将请求放入Queue中，而不是新建线程。如果无法将请求放入Queue，则新建线程，除非此时的线程数超过了maxnumPoolSize。若发生这种情况，则会执行拒绝策略。</p>
+<p>线程池所使用到的三个实现：SynchronousQueue、LinkedBlockingQueue、ArrayBlockingQueue。</p>
+<ul>
+<li>SynchronousQueue (默认)</li>
+</ul>
+<p><strong>直接提交。</strong>它将请求直接提交给线程而不是保持它们。每当有新请求都会新建一个线程去执行请求，若有空闲线程则会复用。所以一般都会要求无界maxnumPoolSize以避免拒绝提交的请求。</p>
+<p>由于SynchronousQueue是无界的，也就是说接受请求的数量没有限制。但是由于该Queue本身的特性，在某次添加元素后必须等待其他线程取走后才能继续添加。而将maxnumPoolSize设为无界的原因如下:</p>
+<p>当核心线程已经有2个正在运行。</p>
+<p>此时继续来了一个任务（A），根据前面介绍的”如果运行的线程等于或多于 corePoolSize，则Executor始终首选将请求加入队列，而不添加新的线程。”，所以A被添加到queue中。又来了一个任务（B），且核心2个线程还没有忙完，OK，接下来首先尝试1中描述，但是由于使用的SynchronousQueue，所以一定无法加入进去。此时便满足了上面提到的 “如果无法将请求加入队列，则创建新的线程，除非创建此线程超出maximumPoolSize，在这种情况下，任务将被拒绝。”，所以必然会新建一个线程来运行这个任务。暂时还可以，但是如果这三个任务都还没完成，连续来了两个任务，第一个添加入queue中，后一个呢？queue中无法插入，而线程数达到了maximumPoolSize，所以只好执行异常策略了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 无界线程池,可以自动回收线程</span></span><br><span class="line"><span class="comment"> * keepAliveTime为60秒，结合下面的参数：新任务来时若有空闲线程则会复用，空闲60秒后回收</span></span><br><span class="line"><span class="comment"> * SynchronousQueue是直接提交的，若有新任务则开启新线程而不保持它们。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newCachedThreadPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(<span class="number">0</span>, Integer.MAX_VALUE,</span><br><span class="line">                                <span class="number">60L</span>, TimeUnit.SECONDS,</span><br><span class="line">                                <span class="keyword">new</span> SynchronousQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>LinkedBlockingQueue</li>
+</ul>
+<p><strong>无界队列。</strong>当线程池中所以的corePoolSize线程都在执行时，新的请求将会加入队列中等待。这样，创建的线程就不会超过corePoolSize(因此，maxnumPoolSize也就无效了)。当每个请求之间都互不影响时，适合使用无界队列。例如：web页服务器中，这种排队可用于处理瞬时突发的大量请求。</p>
+<p>以下方的代码为例，corePoolSize和maxnumPoolSize一致，队列使用的是无界队列，其实相当于maxnumPoolSize无效，因为不管添加多少请求，线程数也不会超过corePoolSize。都被LinkedBlockingQueue接收了。若接收的请求非常大，那就直接干爆服务器了。因此，maxnumPoolSize最好是手动指定。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 固定大小线程池</span></span><br><span class="line"><span class="comment"> * keepAliveTime为0表示不需要保留空闲线程</span></span><br><span class="line"><span class="comment"> * LinkedBlockingQueue是无界队列，则maxnumPoolSize无效</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ExecutorService <span class="title">newFixedThreadPool</span><span class="params">(<span class="keyword">int</span> nThreads)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> ThreadPoolExecutor(nThreads, nThreads,</span><br><span class="line">                                  <span class="number">0L</span>, TimeUnit.MILLISECONDS,</span><br><span class="line">                                  <span class="keyword">new</span> LinkedBlockingQueue&lt;Runnable&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>有界队列。</strong>当使用有限的maxnumPoolSize时，有界队列有助于防止资源耗尽，但是较难调整和控制。队列大小和最大池大小可能要相互折衷：使用大型队列和小型池可以最大限度的降低CPU使用率、操作系统资源和上下文切换开销，但是可能导致吞吐量的降低。如果任务频繁阻塞，则系统可能为超过您许可的更多线程安排时间。使用小型队列通常要求较大的池大小，CPU使用率较高，但是可能遇到不可接受的调度开销，这样也会降低吞吐量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> ThreadPoolExecutor(</span><br><span class="line">    <span class="number">2</span>, <span class="number">4</span>, <span class="number">30</span>, TimeUnit.SECONDS,</span><br><span class="line">    <span class="keyword">new</span> ArrayBlockingQueue&lt;Runnable&gt;(<span class="number">2</span>),</span><br><span class="line">    <span class="keyword">new</span> RecorderThreadFactory(<span class="string">"CookieRecorderPool"</span>),</span><br><span class="line">    <span class="keyword">new</span> ThreadPoolExecutor.CallerRunsPolicy());</span><br></pre></td></tr></table></figure>
+<p>假设所有的任务都永远无法执行完。首先来的请求A、B可以直接运行，然后再来请求C、D，由于线程数已经达到了2，C、D将被加入队列中。再来请求E、F，则新建线程运行E、F。但是如果再来新的请求，队列无法接受，线程数也达到最大限制，所以就会执行拒绝策略了。</p>
+<blockquote>
+<h4 id="拒绝策略"><a href="#拒绝策略" class="headerlink" title="拒绝策略"></a>拒绝策略</h4></blockquote>
+<blockquote>
+<p> RejectedExecutionHandler：自定义拒绝策略</p>
+<p>AbortPolicy：直接抛出RejectedExecutionException，丢弃任务。</p>
+<p>CallerRunsPolicy：不丢弃任务，而是由提交请求的线程本身来执行。</p>
+<p>DiscardPolicy：丢弃任务，但不抛出异常</p>
+<p>DiscardOldestPolicy：丢失队列头节点的请求，然后重新尝试运行该请求。这个策略要慎用。</p>
+<p>设想:如果其他线程都还在运行，那么新来任务踢掉旧任务，缓存在queue中，再来一个任务又会踢掉queue中最老任务。</p>
+</blockquote>
 </the>
       
     </div>
@@ -338,13 +365,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/04/25/多线程笔记 (三) 线程锁原理/">多线程笔记 (三) 线程锁原理</a></p>
+        <p><span>本文标题:</span><a href="/2019/04/26/多线程笔记 (四) 线程池介绍/">多线程笔记 (四) 线程池介绍</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Sunny___ 的个人博客">Sunny___</a></p>
-        <p><span>发布时间:</span>2019年04月25日 - 13时38分</p>
-        <p><span>最后更新:</span>2019年04月25日 - 15时24分</p>
+        <p><span>发布时间:</span>2019年04月26日 - 14时18分</p>
+        <p><span>最后更新:</span>2019年04月26日 - 17时50分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="多线程笔记 (三) 线程锁原理">http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/　　作者: Sunny___" title></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="多线程笔记 (四) 线程池介绍">http://yoursite.com/2019/04/26/多线程笔记 (四) 线程池介绍/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/26/多线程笔记 (四) 线程池介绍/　　作者: Sunny___" title></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target="_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -355,18 +382,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          多线程笔记 (四) 线程池介绍
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">多线程笔记 (二) 线程同步与锁</div>
+    <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">多线程笔记 (三) 线程锁原理</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -378,7 +396,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#锁原理详解"><span class="toc-number">1.</span> <span class="toc-text">锁原理详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-为什么要用锁"><span class="toc-number">1.0.1.</span> <span class="toc-text">1. 为什么要用锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-锁实现的基本原理"><span class="toc-number">1.0.2.</span> <span class="toc-text">2. 锁实现的基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-synchronized实现原理"><span class="toc-number">1.0.2.1.</span> <span class="toc-text">2.1 synchronized实现原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#monitorenter"><span class="toc-number">1.0.2.2.</span> <span class="toc-text">monitorenter</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#monitorexit"><span class="toc-number">1.0.2.3.</span> <span class="toc-text">monitorexit</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-锁存放位置"><span class="toc-number">1.0.3.</span> <span class="toc-text">3. 锁存放位置</span></a></li></ol></li></ol>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#线程池"><span class="toc-number">1.</span> <span class="toc-text">线程池</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#为什么要用线程池："><span class="toc-number">1.0.1.</span> <span class="toc-text">为什么要用线程池：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#JDK提供的常用线程池"><span class="toc-number">1.0.2.</span> <span class="toc-text">JDK提供的常用线程池</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#ThreadPoolExecotor参数详解"><span class="toc-number">1.0.3.</span> <span class="toc-text">ThreadPoolExecotor参数详解</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BlockingQueue"><span class="toc-number">1.0.4.</span> <span class="toc-text">BlockingQueue</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#拒绝策略"><span class="toc-number">1.0.5.</span> <span class="toc-text">拒绝策略</span></a></li></ol></li></ol>
 </div>
 <style>
     .left-col .switch-btn {
@@ -439,13 +457,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="上一篇: 多线程笔记 (四) 线程池介绍">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" title="下一篇: 多线程笔记 (二) 线程同步与锁">
+            <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="下一篇: 多线程笔记 (三) 线程锁原理">
                 <i class="fa fa-angle-right"></i>
             </a>
         
