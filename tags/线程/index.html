@@ -1,546 +1,220 @@
+
 <!DOCTYPE html>
-<html>
+<html lang class="loading">
 <head><meta name="generator" content="Hexo 3.8.0">
-  <meta charset="utf-8">
-  <meta name="baidu-site-verification" content="L6Lm9d5Crl">
-  
-   
-    <meta name="keywords" content="线程">
-  
-  
-  
-  <title>Tag: 线程 | 朝阳的博客</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="朝阳的博客">
-<meta property="og:url" content="http://yoursite.com/tags/线程/index.html">
-<meta property="og:site_name" content="朝阳的博客">
-<meta property="og:locale" content="default">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="朝阳的博客">
-  
-  
-    <link rel="icon" href="/img/favicon.png">
-  
-  
-  <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
-  
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-  
-  
-      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  
-  <!-- 加载特效 -->
-    <script src="/js/pace.js"></script>
-    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet">
-  <script>
-      var yiliaConfig = {
-          fancybox: true,
-          animate: true,
-          isHome: false,
-          isPost: false,
-          isArchive: false,
-          isTag: true,
-          isCategory: false,
-          open_in_new: false
-      }
-  </script>
-</head></html>
-<body>
-  <div id="container">
-    <div class="left-col">
-    <div class="overlay"></div>
-<div class="intrude-less">
-    <header id="header" class="inner">
-        
-<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-
-        <a href="/" class="profilepic">
-            
-            <img lazy-src="/img/avatar.png" class="js-avatar">
-            
-        </a>
-        <hgroup>
-          <h1 class="header-author"><a href="/">Sunny___</a></h1>
-        </hgroup>
-        
-        
-            <form>
-                <input type="text" class="st-default-search-input search" id="local-search-input" placeholder="搜索一下" autocomplete="off">
-            </form>
-            <div id="local-search-result"></div>
-        
-        
-            <script type="text/javascript">
-                (function() {
-                    'use strict';
-                    function getMatchData(keyword, data) {
-                        var matchData = [];
-                        for(var i =0;i<data.length;i++){
-                            if(data[i].title.toLowerCase().indexOf(keyword)>=0) 
-                                matchData.push(data[i])
-                        }
-                        return matchData;
-                    }
-                    var $input = $('#local-search-input');
-                    var $resultContent = $('#local-search-result');
-                    $input.keyup(function(){
-                        $.ajax({
-                            url: '/search.json',
-                            dataType: "json",
-                            success: function( json ) {
-                                var str='<ul class=\"search-result-list\">';                
-                                var keyword = $input.val().trim().toLowerCase();
-                                $resultContent.innerHTML = "";
-                                if ($input.val().trim().length <= 0) {
-                                    $resultContent.empty();
-                                    $('#switch-area').show();
-                                    return;
-                                }
-                                var results = getMatchData(keyword, json);
-                                if(results.length === 0){
-                                    $resultContent.empty();
-                                    $('#switch-area').show();
-                                    return;
-                                } 
-                                for(var i =0; i<results.length; i++){
-                                    str += "<li><a href='"+ results[i].url +"' class='search-result-title'>"+ results[i].title +"</a></li>";
-                                }
-                                str += "</ul>";
-                                $resultContent.empty();
-                                $resultContent.append(str);
-                                $('#switch-area').hide();
-                            }
-                        });
-                    });
-                })();
-            </script>
-        
-        
-            <div id="switch-btn" class="switch-btn">
-                <div class="icon">
-                    <div class="icon-ctn">
-                        <div class="icon-wrap icon-house" data-idx="0">
-                            <div class="birdhouse"></div>
-                            <div class="birdhouse_holes"></div>
-                        </div>
-                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
-                            <div class="ribbon"></div>
-                        </div>
-                        
-                        
-                        <div class="icon-wrap icon-me hide" data-idx="3">
-                            <div class="user"></div>
-                            <div class="shoulder"></div>
-                        </div>
-                        
-                    </div>
-                </div>
-                <div class="tips-box hide">
-                    <div class="tips-arrow"></div>
-                    <ul class="tips-inner">
-                        <li>菜单</li>
-                        <li>标签</li>
-                        
-                        
-                        <li>关于我</li>
-                        
-                    </ul>
-                </div>
-            </div>
-        
-        <div id="switch-area" class="switch-area">
-            <div class="switch-wrap">
-                <section class="switch-part switch-part1">
-                    <nav class="header-menu">
-                        <ul>
-                        
-                            <li><a href="/archives/">所有文章</a></li>
-                        
-                            <li><a href="/tags">分类</a></li>
-                        
-                        </ul>
-                    </nav>
-                    <nav class="header-nav">
-                        <ul class="social">
-                            
-                                <a class="fl github" target="_blank" href="https://github.com/Suny95" title="github">github</a>
-                            
-                        </ul>
-                    </nav>
-                </section>
-                
-                <section class="switch-part switch-part2">
-                    <div class="widget tagcloud" id="js-tagcloud">
-                        <a href="/tags/同步/" style="font-size: 10px;">同步</a> <a href="/tags/线程/" style="font-size: 20px;">线程</a> <a href="/tags/线程方法/" style="font-size: 10px;">线程方法</a> <a href="/tags/线程池/" style="font-size: 10px;">线程池</a> <a href="/tags/锁/" style="font-size: 15px;">锁</a>
-                    </div>
-                </section>
-                
-                
-                
-                
-                <section class="switch-part switch-part3">
-                
-                    <div id="js-aboutme">爱电影,爱游戏,爱编程,爱游泳!!!!</div>
-                </section>
-                
-            </div>
-        </div>
-    </header>
-</div>
-
-    </div>
-    <div class="mid-col">
-      <nav id="mobile-nav">
-      <div class="overlay">
-          <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Sunny___</a></h1>
-      </div>
-    <div class="intrude-less">
-        <header id="header" class="inner">
-            <a href="/" class="profilepic">
-                
-                    <img lazy-src="/img/avatar.png" class="js-avatar">
-                
-            </a>
-            <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">Sunny___</a></h1>
-            </hgroup>
-            
-            <nav class="header-menu">
-                <ul>
-                
-                    <li><a href="/archives/">所有文章</a></li>
-                
-                    <li><a href="/tags">分类</a></li>
-                
-                <div class="clearfix"></div>
-                </ul>
-            </nav>
-            <nav class="header-nav">
-                <div class="social">
-                    
-                        <a class="github" target="_blank" href="https://github.com/Suny95" title="github">github</a>
-                    
-                </div>
-            </nav>
-        </header>
-    </div>
-</nav>
-      <div class="body-wrap">
-  
-  
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tag: 线程 - 朝阳的博客</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Sunny,"> 
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/" class="archive-article-date">
-      <time datetime="2019-04-28T02:55:43.000Z" itemprop="datePublished">04-28</time>
-</a>
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/">多线程笔记 (五) 生产者消费者线程模型</a>
-    </h1>
-  
-
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/多线程/">多线程</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" class="archive-article-date">
-      <time datetime="2019-04-26T06:18:55.000Z" itemprop="datePublished">04-26</time>
-</a>
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/26/多线程笔记 (四) 线程池介绍/">多线程笔记 (四) 线程池介绍</a>
-    </h1>
-  
-
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/多线程/">多线程</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程池/">线程池</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" class="archive-article-date">
-      <time datetime="2019-04-25T05:38:21.000Z" itemprop="datePublished">04-25</time>
-</a>
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/25/多线程笔记 (三) 线程锁原理/">多线程笔记 (三) 线程锁原理</a>
-    </h1>
-  
-
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/多线程/">多线程</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" class="archive-article-date">
-      <time datetime="2019-04-24T05:38:21.000Z" itemprop="datePublished">04-24</time>
-</a>
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/24/多线程笔记 (二) 线程同步与锁/">多线程笔记 (二) 线程同步与锁</a>
-    </h1>
-  
-
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/多线程/">多线程</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/同步/">同步</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/2019/04/22/多线程笔记 (一) 线程简记/" class="archive-article-date">
-      <time datetime="2019-04-22T07:22:26.000Z" itemprop="datePublished">04-22</time>
-</a>
-
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/22/多线程笔记 (一) 线程简记/">多线程笔记 (一) 线程简记</a>
-    </h1>
-  
-
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/多线程/">多线程</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程方法/">线程方法</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
-
-    
-
-
-</div>
-      <footer id="footer">
-    <div class="outer">
-        <div id="footer-info">
-            <div class="footer-left">
-                &copy; 2019 Sunny___
-            </div>
-            <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank">Hexo &nbsp;&nbsp;</a><a href="https://github.com/Suny95" target="_blank">Github</a> by Sunny___
-            </div>
-        </div>
-        
-            <div class="visit">
-                
-                    <span id="busuanzi_container_site_pv" style="display:none">
-                        <span id="site-visit">极客到访数: 
-                            <span id="busuanzi_value_site_uv"></span>
-                        </span>
-                    </span>
-                
-                
-                    <span>, </span>
-                
-                
-                    <span id="busuanzi_container_page_pv" style="display:none">
-                        <span id="page-visit">本页阅读量: 
-                            <span id="busuanzi_value_page_pv"></span>
-                        </span>
-                    </span>
-                
-            </div>
-        
-    </div>
-</footer>
-
-    </div>
-    
-<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
-
-<script src="/js/main.js"></script>
-
+    <meta name="author" content="Sunny___"> 
+    <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
-        $(document).ready(function() {
-            var backgroundnum = 1;
-            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
-            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
-            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
-        })
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
     </script>
-
-
-
-
-
-
-<div class="scroll" id="scroll">
-    <a href="#"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">朝阳的博客</span>
+    <div id="loader"></div>
+    <div class="nav">
+    <ul id="menu-menu" class="menu">
+        
+        <li class="pview menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/categories/" title="分类" target="_blank" rel="noopener">分类</a>
+        </li>
+        
+        <li class="pview menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/archives/" title="归档" target="_blank" rel="noopener">归档</a>
+        </li>
+        
+        <li class="pview menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="/tags/" title="标签" target="_blank" rel="noopener">标签</a>
+        </li>
+        
+        <li class="  menu-item menu-item-type-post_type menu-item-object-page">
+            <a href="https://github.com/Suny95" title="Github" target="_blank" rel="noopener">Github</a>
+        </li>
+        
+    </ul>
+    <p id="copyright">
+        &copy; 2019 Sunny___.
+        Powered by <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a>
+        Theme <a href="https://github.com/Fechin/hexo-theme-diaspora" title="Diaspora" target="_blank" rel="noopener">Diaspora</a>
+        by Fechin
+    </p>
 </div>
-<script>
-    $(document).ready(function() {
-        if ($("#comments").length < 1) {
-            $("#scroll > a:nth-child(2)").hide();
-        };
-    })
-</script>
 
-    <button class="hide-labels">TAG 开关</button>
+<div id="container">
     
-<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<div id="screen">
+    <div id="mark">
+        <div class="layer" data-depth="0.4">
+            <img src="/img/welcome-cover.jpg" id="cover" crossorigin="anonymous" width="1920" height="1080">
+        </div>
+    </div>
+    <div id="vibrant">
+        <svg viewbox="0 0 2880 1620" height="100%" preserveaspectratio="xMaxYMax slice">
+            <polygon opacity="0.7" points="2000,1620 0,1620 0,0 600,0 "/>
+        </svg>
+        <div></div>
+    </div>
+    <div id="header">
+        <div>
+            <a class="image-logo" href="/"></a>
+            <div class="icon-menu switchmenu"></div>
+        </div>
+    </div>
+    
+    <div id="post0">
+        <p>四月 28, 2019</p>
+        <h2><a href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/" title="多线程笔记 (五) 生产者消费者线程模型" class="posttitle">多线程笔记 (五) 生产者消费者线程模型</a></h2>
+        <p class="summary">本文参考地址: Java多线程（九）—–并发协作-生产者消费者模型
+在多线程中，生产者和消费者模型在什么地方都是经...</p>
+    </div>
+    
+</div>
 
-    <script>
-        $(document).ready(function() {
-            $("button").click(function() {
-                $(".article-info").toggle(200);
-            });
-        });
-    </script>
-
-<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
-
-  <script language="javascript">
-    $(function() {
-        $("a[title]").each(function() {
-            var a = $(this);
-            var title = a.attr('title');
-            if (title == undefined || title == "") return;
-            a.data('title', title).removeAttr('title').hover(
-            function() {
-                var offset = a.offset();
-                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
-                    top: offset.top - a.outerHeight() - 15,
-                    left: offset.left + a.outerWidth()/2 + 1
-                }).fadeIn(function() {
-                    var pop = $(this);
-                    setTimeout(function() {
-                        pop.remove();
-                    }, pop.text().length * 800);
-                });
-            }, function() {
-                $("#anchortitlecontainer").remove();
-            });
-        });
-    });
-</script>
+    <div id="primary">
+        
+<div class="post">
+    <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="多线程笔记 (四) 线程池介绍">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556447545456&di=83e44253ee1927c6f3c55a1d0a259451&imgtype=0&src=http%3A%2F%2Fimg17.3lian.com%2Fd%2Ffile%2F201702%2F13%2F4eff9f4d654d21139f3d7aee96186a27.jpg" class="cover" width="680" height="440">
+    </a>
+    <div class="else">
+        <p>四月 26, 2019</p>
+        <h3><a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="多线程笔记 (四) 线程池介绍" class="posttitle">多线程笔记 (四) 线程池介绍</a></h3>
+        <p>本文参考地址: Java线程池使用说明
+线程池线程池的作用：限制系统中执行线程的数量。
+可以根据系统的环境情况，自动或手动设置线程数量，达到运行的最佳效果...</p>
+    </div>
+</div>
 
 
-  </div>
+<div class="post">
+    <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="多线程笔记 (三) 线程锁原理">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556447489100&di=b5a95a66504042134cdfc0cc5da0437f&imgtype=0&src=http%3A%2F%2Fimg3.redocn.com%2Ftupian%2F20150106%2Fziseweimeiyuesebeijing_3791238.jpg" class="cover" width="680" height="440">
+    </a>
+    <div class="else">
+        <p>四月 25, 2019</p>
+        <h3><a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="多线程笔记 (三) 线程锁原理" class="posttitle">多线程笔记 (三) 线程锁原理</a></h3>
+        <p>本文参考地址：Java中的锁原理、锁优化、CAS、AQS详解！
+锁原理详解1. 为什么要用锁锁是为了解决并发操作引起的脏读、数据不一致的问题。
+2. 锁实...</p>
+    </div>
+</div>
+
+
+<div class="post">
+    <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" title="多线程笔记 (二) 线程同步与锁">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556447410046&di=3f81821ba362b3f5e746c3ff020f5804&imgtype=0&src=http%3A%2F%2Fimg.sccnn.com%2Fbimg%2F337%2F3411.jpg" class="cover" width="680" height="440">
+    </a>
+    <div class="else">
+        <p>四月 24, 2019</p>
+        <h3><a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" title="多线程笔记 (二) 线程同步与锁" class="posttitle">多线程笔记 (二) 线程同步与锁</a></h3>
+        <p>线程同步本文参考地址: Java多线程 (五) — 线程的同步与锁
+线程同步是为了防止多个线程在操作统一数据时，对数据造成损坏。线程同步可以分为同步方法和...</p>
+    </div>
+</div>
+
+
+<div class="post">
+    <a href="/2019/04/22/多线程笔记 (一) 线程简记/" title="多线程笔记 (一) 线程简记">
+        <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1556447348381&di=e761ce70b3cec1d4b4b0d0f7c38e4905&imgtype=0&src=http%3A%2F%2Fi3.sinaimg.cn%2Fgm%2Fo%2Fi%2F2008-09-03%2FU1901P115T41D148033F757DT20080903105357.jpg" class="cover" width="680" height="440">
+    </a>
+    <div class="else">
+        <p>四月 22, 2019</p>
+        <h3><a href="/2019/04/22/多线程笔记 (一) 线程简记/" title="多线程笔记 (一) 线程简记" class="posttitle">多线程笔记 (一) 线程简记</a></h3>
+        <p>多线程五状态
+新建状态  
+就绪状态  
+运行状态  
+等待/阻塞/睡眠状态  
+死亡状态
+
+线程优先级&emsp;&emsp;Java多线程存在优先级的...</p>
+    </div>
+</div>
+
+
+    </div>
+    
+</div>
+<div id="preview"></div>
+
+
 </body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 </html>
