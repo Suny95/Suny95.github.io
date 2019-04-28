@@ -7,25 +7,20 @@
   
   
   
-  <title>多线程笔记 (三) 线程锁原理 | 朝阳的博客</title>
+  <title>多线程笔记 (五) 生产者消费者线程模型 | 朝阳的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
-<meta name="keywords" content="线程,锁">
+  <meta name="description" content="多线程笔记 (五) 生产者消费者线程模型： 生产者消费者线程模型">
+<meta name="keywords" content="线程">
 <meta property="og:type" content="article">
-<meta property="og:title" content="多线程笔记 (三) 线程锁原理">
-<meta property="og:url" content="http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/index.html">
+<meta property="og:title" content="多线程笔记 (五) 生产者消费者线程模型">
+<meta property="og:url" content="http://yoursite.com/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/index.html">
 <meta property="og:site_name" content="朝阳的博客">
-<meta property="og:description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
+<meta property="og:description" content="多线程笔记 (五) 生产者消费者线程模型： 生产者消费者线程模型">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9A1CC714D7B3466E86CA2829E319754C/11384">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/14AE75F3FA674E62B629247A3D05E2A1/11382">
-<meta property="og:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/E51C96AE0A84432BB74986BEBB746FBB/11386">
-<meta property="og:updated_time" content="2019-04-25T07:24:55.262Z">
+<meta property="og:updated_time" content="2019-04-28T03:05:15.357Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="多线程笔记 (三) 线程锁原理">
-<meta name="twitter:description" content="多线程笔记 (三) 线程锁原理： 线程锁原理介绍">
-<meta name="twitter:image" content="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377">
+<meta name="twitter:title" content="多线程笔记 (五) 生产者消费者线程模型">
+<meta name="twitter:description" content="多线程笔记 (五) 生产者消费者线程模型： 生产者消费者线程模型">
   
   
     <link rel="icon" href="/img/favicon.png">
@@ -237,11 +232,11 @@
         </header>
     </div>
 </nav>
-      <div class="body-wrap"><article id="post-多线程笔记 (三) 线程锁原理" class="article article-type-post" itemscope itemprop="blogPost">
+      <div class="body-wrap"><article id="post-多线程笔记 (五) 生产者消费者线程模型" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="/2019/04/25/多线程笔记 (三) 线程锁原理/" class="article-date">
-      <time datetime="2019-04-25T05:38:21.000Z" itemprop="datePublished">2019-04-25</time>
+      <a href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/" class="article-date">
+      <time datetime="2019-04-28T02:55:43.000Z" itemprop="datePublished">2019-04-28</time>
 </a>
 
     </div>
@@ -255,7 +250,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      多线程笔记 (三) 线程锁原理
+      多线程笔记 (五) 生产者消费者线程模型
     </h1>
   
 
@@ -271,7 +266,7 @@
 
         
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/锁/">锁</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/线程/">线程</a></li></ul>
     </div>
 
         <div class="clearfix"></div>
@@ -281,55 +276,19 @@
     <div class="article-entry" itemprop="articleBody">
       
           
-        <p><strong> 多线程笔记 (三) 线程锁原理：</strong> <excerpt in index | 首页摘要><br>线程锁原理介绍<br><a id="more"></a></excerpt></p>
+        <p><strong> 多线程笔记 (五) 生产者消费者线程模型：</strong> <excerpt in index | 首页摘要><br>生产者消费者线程模型<br><a id="more"></a></excerpt></p>
 <the rest of contents | 余下全文>
 
-<p>本文参考地址：<a href="http://cmsblogs.com/?p=4586" target="_blank" rel="noopener">Java中的锁原理、锁优化、CAS、AQS详解！</a></p>
-<h2 id="锁原理详解"><a href="#锁原理详解" class="headerlink" title="锁原理详解"></a>锁原理详解</h2><h4 id="1-为什么要用锁"><a href="#1-为什么要用锁" class="headerlink" title="1. 为什么要用锁"></a>1. 为什么要用锁</h4><p>锁是为了解决并发操作引起的脏读、数据不一致的问题。</p>
-<h4 id="2-锁实现的基本原理"><a href="#2-锁实现的基本原理" class="headerlink" title="2. 锁实现的基本原理"></a>2. 锁实现的基本原理</h4><h5 id="2-1-synchronized实现原理"><a href="#2-1-synchronized实现原理" class="headerlink" title="2.1 synchronized实现原理"></a>2.1 synchronized实现原理</h5><blockquote>
-<p>synchronized是基于Monitor来实现同步的</p>
-</blockquote>
-<p>Monitor从两个方面来支持线程之间的同步:</p>
-<ul>
-<li>互斥执行</li>
-<li>协作</li>
-</ul>
-<ol>
-<li><p>Java使用对象锁保证工作在共享的数据集上的线程互斥执行。</p>
-</li>
-<li><p>使用notify、notifyAll、wait方法来协同不同线程之间的工作。</p>
-</li>
-<li><p>Class和Object都关联了一个Monitor。</p>
-</li>
-</ol>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9DA0D191938C4895ADEF11EBE5B8789C/11377" alt="image"></p>
-<ul>
-<li>线程进入同步方法中。</li>
-<li>为了继续执行临界区代码，线程必须获取Monitor锁，若获取锁成功，将成为该监视者对象的拥有者，任意时刻内，监视者对象只属于一个活动线程(The Owner)</li>
-<li>拥有监视者对象的线程可以调用wait()进入等待集合(wait set)，同时释放监视锁，进入等待状态。</li>
-<li>其他线程调用notify、notifyAll方法唤醒等待集合中的线程，这些等待的线程需要重新获取监视锁后才能执行wait()之后的代码。</li>
-<li>同步方法执行完毕后，线程退出临界区，并释放监视锁。</li>
-</ul>
+<p>本文参考地址: <a href="http://cmsblogs.com/?p=1300" target="_blank" rel="noopener">Java多线程（九）—–并发协作-生产者消费者模型</a></p>
+<p>在多线程中，生产者和消费者模型在什么地方都是经典的案例。</p>
+<p>准确来说应该是”生产者-消费者-仓储”模型，离开了仓储，生产者消费者模型就显得没有说服力了。</p>
+<p>此模型需要明确注意的几个点：</p>
 <blockquote>
-<p>synchronized具体实现</p>
+<p>生产者仅仅在仓储未满时候生产，仓满则停止生产。</p>
+<p>消费者仅在仓储又产品时消费，仓空则等待。</p>
+<p>当消费者发现仓储没产品可消费时会通知生产者生产（notifyAll）。</p>
+<p>生产者生产出可消费产品时，应通知等待的消费者去消费（notifyAll）。</p>
 </blockquote>
-<ol>
-<li>同步代码块才用monitorenter、monitorexit指令显示的实现。</li>
-<li>同步方法则使用ACC_SYNCHRONIZED标记符隐式的实现。(JDK 1.6 / JDK 1.7  JDK1.8的环境下没发现标记)</li>
-</ol>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/9A1CC714D7B3466E86CA2829E319754C/11384" alt="image"></p>
-<p>上图是使用了同步代码块的方法反编译后的字节码内容，monitorenter获取对象锁，monitorexit释放锁。</p>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/14AE75F3FA674E62B629247A3D05E2A1/11382" alt="image"></p>
-<p>上图是我从其他地方复制过来的，我自己用的JDK8是没发现这个标记的。还没发现是否有改动过。</p>
-<h5 id="monitorenter"><a href="#monitorenter" class="headerlink" title="monitorenter"></a>monitorenter</h5><p>每一个对象都有一个monitor，一个monitor只能被一个线程持有。当一个线程执行到monitorenter命令时会常识获取相对应对象的monitor，获取规则估下：</p>
-<ol>
-<li>如果monitor的进入数为0，则该线程可以进入monitor，并将monitor进入数设置为1，该线程即为monitor的持有者。</li>
-<li>如果当前线程已经拥有monitor，只是重新进入，则monitor的进入数加1，所以synchronized实现的锁是可重入锁。</li>
-<li>如果monitor已被其他线程持有，则当前线程进入阻塞状态，直到monitor的进入数为0，再重新获取monitor。</li>
-</ol>
-<h5 id="monitorexit"><a href="#monitorexit" class="headerlink" title="monitorexit"></a>monitorexit</h5><p>只有持有相应对象的monitor的线程才能执行monitorexit指令。每执行一次该指令monitor进入数减1，当进入数为0时当前线程释放monitor，此时其他阻塞的线程将可以尝试获取该monitor。</p>
-<h4 id="3-锁存放位置"><a href="#3-锁存放位置" class="headerlink" title="3. 锁存放位置"></a>3. 锁存放位置</h4><p>锁标记存放在Java对象头的Mark Word中。线程获取锁也就是去修改Mark Word；若修改成功，则代表获取锁，否则未获取锁。</p>
-<p><img src="https://note.youdao.com/yws/public/resource/c01fb72f8314113c30527fd0d287849b/xmlnote/E51C96AE0A84432BB74986BEBB746FBB/11386" alt="image"></p>
 </the>
       
     </div>
@@ -338,13 +297,13 @@
   
     
     <div class="copyright">
-        <p><span>本文标题:</span><a href="/2019/04/25/多线程笔记 (三) 线程锁原理/">多线程笔记 (三) 线程锁原理</a></p>
+        <p><span>本文标题:</span><a href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/">多线程笔记 (五) 生产者消费者线程模型</a></p>
         <p><span>文章作者:</span><a href="/" title="访问 Sunny___ 的个人博客">Sunny___</a></p>
-        <p><span>发布时间:</span>2019年04月25日 - 13时38分</p>
-        <p><span>最后更新:</span>2019年04月25日 - 15时24分</p>
+        <p><span>发布时间:</span>2019年04月28日 - 10时55分</p>
+        <p><span>最后更新:</span>2019年04月28日 - 11时05分</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="/2019/04/25/多线程笔记 (三) 线程锁原理/" title="多线程笔记 (三) 线程锁原理">http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/25/多线程笔记 (三) 线程锁原理/　　作者: Sunny___" title></span>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/" title="多线程笔记 (五) 生产者消费者线程模型">http://yoursite.com/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/　　作者: Sunny___" title></span>
         </p>
         <p>
             <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target="_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
@@ -355,18 +314,9 @@
 
 <nav id="article-nav">
   
-    <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption"><</strong>
-      <div class="article-nav-title">
-        
-          多线程笔记 (四) 线程池介绍
-        
-      </div>
-    </a>
   
-  
-    <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">多线程笔记 (二) 线程同步与锁</div>
+    <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">多线程笔记 (四) 线程池介绍</div>
       <strong class="article-nav-caption">></strong>
     </a>
   
@@ -378,7 +328,7 @@
 
     <div id="toc" class="toc-article">
     <strong class="toc-title">文章目录</strong>
-    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#锁原理详解"><span class="toc-number">1.</span> <span class="toc-text">锁原理详解</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-为什么要用锁"><span class="toc-number">1.0.1.</span> <span class="toc-text">1. 为什么要用锁</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-锁实现的基本原理"><span class="toc-number">1.0.2.</span> <span class="toc-text">2. 锁实现的基本原理</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#2-1-synchronized实现原理"><span class="toc-number">1.0.2.1.</span> <span class="toc-text">2.1 synchronized实现原理</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#monitorenter"><span class="toc-number">1.0.2.2.</span> <span class="toc-text">monitorenter</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#monitorexit"><span class="toc-number">1.0.2.3.</span> <span class="toc-text">monitorexit</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-锁存放位置"><span class="toc-number">1.0.3.</span> <span class="toc-text">3. 锁存放位置</span></a></li></ol></li></ol>
+    
 </div>
 <style>
     .left-col .switch-btn {
@@ -439,13 +389,11 @@
 
     <div class="scroll" id="post-nav-button">
         
-            <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="上一篇: 多线程笔记 (四) 线程池介绍">
-                <i class="fa fa-angle-left"></i>
-            </a>
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
         
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
         
-            <a href="/2019/04/24/多线程笔记 (二) 线程同步与锁/" title="下一篇: 多线程笔记 (二) 线程同步与锁">
+            <a href="/2019/04/26/多线程笔记 (四) 线程池介绍/" title="下一篇: 多线程笔记 (四) 线程池介绍">
                 <i class="fa fa-angle-right"></i>
             </a>
         
