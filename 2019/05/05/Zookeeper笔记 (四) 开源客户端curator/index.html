@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zookeeper笔记 (四) 开源客户端curator - 朝阳的博客</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Sunny,"> 
+    <meta name="description" content="本文参考地址：【Zookeeper 学习笔记】—zookeeper开源客户端curator
+
+zookeeper第三方开源客户端
+
+zookeeper的第三方开源客户端主要有zkClient、cur,"> 
+    <meta name="author" content="Sunny___"> 
+    <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">朝阳的博客</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yoursite.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Zookeeper笔记 (四) 开源客户端curator</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Zookeeper笔记 (四) 开源客户端curator</h1>
+        <div class="stuff">
+            <span>五月 05, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/curator/">curator</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>本文参考地址：<a href="http://cmsblogs.com/?p=4109" target="_blank" rel="noopener">【Zookeeper 学习笔记】—zookeeper开源客户端curator</a></p>
+<ul>
+<li><h3 id="zookeeper第三方开源客户端"><a href="#zookeeper第三方开源客户端" class="headerlink" title="zookeeper第三方开源客户端"></a>zookeeper第三方开源客户端</h3></li>
+</ul>
+<p>zookeeper的第三方开源客户端主要有zkClient、curator。其中zkClient解决了session会话超时重连、Watcher反复注册等问题，提供了更加简洁的API，但zkClient社区不活跃，文档不够完善。而curator是Apache基金会的顶级项目之一，它解决了session会话超时重连、Watcher反复注册、NodeExitsException异常等问题，curator具有更加完善的文档。</p>
+<ul>
+<li><h3 id="curator客户端api介绍"><a href="#curator客户端api介绍" class="headerlink" title="curator客户端api介绍"></a>curator客户端api介绍</h3></li>
+</ul>
+<ol>
+<li>curator-framework：对zookeeper底层api的一些封装</li>
+<li>curato-client：提供一些客户端操作，如重试策略等</li>
+<li>curator-recipes：封装了一些高级特性，如Cache事件监听、选举、分布式锁、分布式计数器、分布式Barrier等</li>
+</ol>
+<ul>
+<li><h4 id="创建zookeeper会话-一"><a href="#创建zookeeper会话-一" class="headerlink" title="创建zookeeper会话 (一)"></a>创建zookeeper会话 (一)</h4></li>
+</ul>
+<p>该方法会返回一个<code>org.apache.curator.framework.CuratorFramework</code>类型的对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> CuratorFramework <span class="title">newClient</span><span class="params">(String connectString, RetryPolicy retryPolicy)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> CuratorFramework <span class="title">newClient</span><span class="params">(String connectString, <span class="keyword">int</span> sessionTimeoutMs, <span class="keyword">int</span> connectionTimeoutMs, RetryPolicy retryPolicy)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<blockquote>
+<ul>
+<li>connectString：逗号分开的ip：port对</li>
+<li>sessionTimeoutMs：会话超时时间，单位为毫秒，默认60000ms，指连接建立完后多久没收到心跳检测，超过该时间即会话超时</li>
+<li>connectTimeoutMs：连接创建超时时间，单位为毫秒，默认15000ms，指客户端与服务端建立连接时多长时间没连上就算超时</li>
+<li>retryPolicy：重试策略</li>
+</ul>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * retryPolicy定义</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">RetryPolicy</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当allowRetry返回true时继续重试，返回false不再重试，可以通过实现该接口来自定义重试策略</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> retryCount 到目前为止已经重试的次数(初始为0)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> elapsedTimeMs 尝试操作后经过的时间(毫秒)</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sleeper 使用它来休眠，不需要使用Thread.sleep</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> true/false</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">allowRetry</span><span class="params">(<span class="keyword">int</span> retryCount, <span class="keyword">long</span> elapsedTimeMs, RetrySleeper sleeper)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><h5 id="curator提供的重试策略"><a href="#curator提供的重试策略" class="headerlink" title="curator提供的重试策略"></a>curator提供的重试策略</h5><ul>
+<li>ExponentialBackofRetry：该重试策略随着重试次数的增加，sleep时间呈指数增长</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ExponentialBackoffRetry</span><span class="params">(<span class="keyword">int</span> baseSleepTimeMs, <span class="keyword">int</span> maxRetries)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">ExponentialBackoffRetry</span><span class="params">(<span class="keyword">int</span> baseSleepTimeMs, <span class="keyword">int</span> maxRetries, <span class="keyword">int</span> maxSleepMs)</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>第retryCount次重试的sleep时间计算方式为：</p>
+<p>baseSleepTimeMs * Math.max(1, random.nextInt(1 &lt;&lt; retryCount + 1))，如果该值大于maxSleepMs，则sleep时间为maxSleepMs，如果重试次数大于maxRetries，则不再重试</p>
+</blockquote>
+<ul>
+<li>RetryNTimes：该重试策略重试指定次数，每次sleep固定时间</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RetryNTimes</span><span class="params">(<span class="keyword">int</span> n, <span class="keyword">int</span> sleepMsBetweenRetries)</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>n是重试次数</p>
+<p>sleepMsBetweenRetries是sleep时间</p>
+</blockquote>
+<ul>
+<li>RetryOneTime：该重试策略只重试一次</li>
+<li>RetryUntilElapsed：该重试策略对重试次数无限制，但对总的重试时间做限制</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">RetryUntilElapsed</span><span class="params">(<span class="keyword">int</span> maxElapsedTimeMs, <span class="keyword">int</span> sleepMsBetweenRetries)</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> maxElapsedTimeMs是最大的重试时间</p>
+<p>sleepMsBetweenRetries是sleep的时间间隔</p>
+</blockquote>
+</li>
+<li><h4 id="创建zookeeper会话-二"><a href="#创建zookeeper会话-二" class="headerlink" title="创建zookeeper会话 (二)"></a>创建zookeeper会话 (二)</h4><ul>
+<li>通过Builder的方式创建会话</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">RetryPolicy retryPolicy = <span class="keyword">new</span> ExponentialBackoffRetry(<span class="number">3000</span>, <span class="number">5</span>);</span><br><span class="line">CuratorFramework client =  CuratorFrameworkFactory.builder()</span><br><span class="line">        .connectString(<span class="string">"192.168.0.102:2181,192.168.0.102:2182,192.168.0.102:2183"</span>)</span><br><span class="line">        .sessionTimeoutMs(<span class="number">30000</span>)</span><br><span class="line">  			.connectionTimeoutMs(<span class="number">15000</span>)</span><br><span class="line">        .retryPolicy(retryPolicy)</span><br><span class="line">  			<span class="comment">//根节点</span></span><br><span class="line">        .namespace(<span class="string">"curatorTest"</span>)</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li>开启会话</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">client.start();</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>创建zookeeper节点</p>
+<p>curator执行各种操作都必须先获得一个构建该操作的包装类(Builder对象)，创建节点则需要获得一个<code>org.apache.curator.framework.api.CreateBuilder</code>对象，然后用这个对象来构建创建节点的操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 递归创建(持久)父目录</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ProtectACLCreateModeStatPathAndBytesable&lt;String&gt; <span class="title">creatingParentsIfNeeded</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 设置创建节点的属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ACLBackgroundPathAndBytesable&lt;String&gt; <span class="title">withMode</span><span class="params">(CreateMode mode)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 设置节点的acl属性</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ACLBackgroundPathAndBytesable&lt;String&gt; <span class="title">withACL</span><span class="params">(List&lt;ACL&gt; aclList, <span class="keyword">boolean</span> applyToParents)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 指定创建节点的路径和节点上的数据</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">forPath</span><span class="params">(<span class="keyword">final</span> String givenPath, <span class="keyword">byte</span>[] data)</span> <span class="keyword">throws</span> Exception</span></span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">String test1Data = client.create()</span><br><span class="line">                    .creatingParentsIfNeeded()</span><br><span class="line">                    .withMode(CreateMode.PERSISTENT)</span><br><span class="line">                    .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)</span><br><span class="line">                    .forPath(<span class="string">"/curatorTest/test1"</span>, <span class="string">"test1"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> CreateMode.PERSISTENT：持久节点</p>
+<p>CreateMode.PERSISTENT_SEQUENTIAL：持久顺序节点</p>
+<p>CreateMode.EPHEMERAL：临时节点</p>
+<p>CreateMode.EPHEMERAL_SEQUENTIAL：临时顺序节点</p>
+<p>ZooDefs.Ids：权限对象</p>
+</blockquote>
+</li>
+<li><p>删除zookeeper节点</p>
+<p>同理要先获得一个删除操作的Builder</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定要删除数据的版本号</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BackgroundPathable&lt;Void&gt; <span class="title">withVersion</span><span class="params">(<span class="keyword">int</span> version)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 确保数据被删除，本质上就是重试，当删除失败时重新发起删除操作</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ChildrenDeletable <span class="title">guaranteed</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">// 指定删除的节点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Void <span class="title">forPath</span><span class="params">(String path)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function"><span class="comment">// 递归删除子节点</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BackgroundVersionable <span class="title">deletingChildrenIfNeeded</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">client.delete()</span><br><span class="line">      .guaranteed()</span><br><span class="line">      .withVersion(-<span class="number">1</span>)</span><br><span class="line">      .deletingChildrenIfNeeded()</span><br><span class="line">      .forPath(<span class="string">"/curatorTest/test1"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读取zookeeper节点数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将节点状态信息保存到stat</span></span><br><span class="line"><span class="keyword">public</span> WatchPathable&lt;<span class="keyword">byte</span>[]&gt; storingStatIn(Stat stat)</span><br><span class="line"><span class="comment">// 指定节点路径</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] forPath(String path) <span class="keyword">throws</span> Exception</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Stat test1Stat = <span class="keyword">new</span> Stat();</span><br><span class="line"><span class="keyword">byte</span>[] test1DataBytes = client.getData()</span><br><span class="line">  														.storingStatIn(test1Stat).forPath(<span class="string">"/curatorTest/test1"</span>);</span><br><span class="line">System.out.println(<span class="string">"test1 data: "</span> + <span class="keyword">new</span> String(test1DataBytes));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>更新zookeeper节点数据</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定版本号</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BackgroundPathAndBytesable&lt;Stat&gt; <span class="title">withVersion</span><span class="params">(<span class="keyword">int</span> version)</span></span></span><br><span class="line"><span class="function"><span class="comment">// 指定节点路径和要更新的数据</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Stat <span class="title">forPath</span><span class="params">(String path, <span class="keyword">byte</span>[] data)</span> <span class="keyword">throws</span> Exception</span></span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stat test1Stat = client.setData()</span><br><span class="line">                    .withVersion(-<span class="number">1</span>)</span><br><span class="line">                    .forPath(<span class="string">"/curatorTest/test1"</span>, <span class="string">"test1DataV2"</span>.getBytes());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读取zookeeper子节点</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 把服务器端获取到的状态数据存储到stat对象中</span></span><br><span class="line"><span class="keyword">public</span> WatchPathable&lt;List&lt;String&gt;&gt; storingStatIn(Stat stat)</span><br><span class="line"><span class="comment">// 指定获取子节点数据的节点路径</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> List&lt;String&gt; <span class="title">forPath</span><span class="params">(String path)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function"><span class="comment">// 设置watcher，类似于zookeeper本身的api，也只能使用一次</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BackgroundPathable&lt;List&lt;String&gt;&gt; <span class="title">usingWatcher</span><span class="params">(Watcher watcher)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> BackgroundPathable&lt;List&lt;String&gt;&gt; <span class="title">usingWatcher</span><span class="params">(CuratorWatcher watcher)</span></span></span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Stat childStat = <span class="keyword">new</span> Stat();</span><br><span class="line">List&lt;String&gt; childs = client.getChildren()</span><br><span class="line">  													.storingStatIn(childStat).forPath(<span class="string">"/curatorTest"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>curator异步操作</p>
+<p>curator为所有操作都提供了异步执行的版本，只需在构建操作的方式链中添加如下操作之一即可：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground()</span><br><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground(Object context)</span><br><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground(BackgroundCallback callback)</span><br><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground(BackgroundCallback callback, Object context)</span><br><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground(BackgroundCallback callback, Executor executor)</span><br><span class="line"><span class="keyword">public</span> ErrorListenerPathable&lt;List&lt;String&gt;&gt; inBackground(BackgroundCallback callback, Object context, Executor executor)</span><br></pre></td></tr></table></figure>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">client.delete()</span><br><span class="line">              .guaranteed()</span><br><span class="line">              .withVersion(-<span class="number">1</span>)</span><br><span class="line">              .inBackground(((client1, event) -&gt; &#123;</span><br><span class="line">                        System.out.println(event.getPath() + <span class="string">", data="</span> + event.getData());</span><br><span class="line">                        System.out.println(<span class="string">"event type="</span> + event.getType());</span><br><span class="line">                        System.out.println(<span class="string">"event code="</span> + event.getResultCode());</span><br><span class="line">               &#125;))</span><br><span class="line">               .forPath(<span class="string">"/curatorTest/test1"</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>curator中的NodeCache</p>
+<p>NodeCache会将某一路径的节点(<code>节点本身</code>)在本地缓存一份，当zk中相应路径的节点发生更新、创建或删除操作时，NodeCache将会得到响应，并且会将最新的数据拉到本地缓存中，<code>NodeCache只会监听路径本身的变化，并不会监听子节点的变化</code>。NodeCache构建函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">NodeCache</span><span class="params">(CuratorFramework client, String path)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">NodeCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> dataIsCompressed)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<blockquote>
+<ul>
+<li>client：curator客户端</li>
+<li>path：需要缓存的节点路径</li>
+<li>dataIsCompressed：是否压缩节点下的数据</li>
+</ul>
+</blockquote>
+<p>可以通过NodeCache注册一个监听器来获取发生变化的通知。只要往容器中添加监听器，当节点发生变更时，容器中的监听器就会得到通知。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> ListenerContainer&lt;NodeCacheListener&gt; listeners = <span class="keyword">new</span> ListenerContainer&lt;NodeCacheListener&gt;();</span><br></pre></td></tr></table></figure>
+<p>添加监听器示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">NodeCache nodeCache = <span class="keyword">new</span> NodeCache(client, <span class="string">"/curatorTest/test1"</span>);</span><br><span class="line"><span class="comment">// 是否立即拉取/curatorTest/test1节点下的数据缓存到本地</span></span><br><span class="line">nodeCache.start(<span class="keyword">true</span>);</span><br><span class="line"><span class="comment">// 添加listener</span></span><br><span class="line">nodeCache.getListenable().addListener(() -&gt; &#123;</span><br><span class="line">    ChildData childData = nodeCache.getCurrentData();</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">null</span> != childData) &#123;</span><br><span class="line">      	System.out.println(<span class="string">"path="</span> + childData.getPath() + <span class="string">", data="</span> + childData.getData() + <span class="string">";"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>curator中的PathChildrenCache</p>
+<p>PathChildrenCache会将指定路径节点下的所有子节点缓存在本地，但不会缓存节点本身的信息。当节点有新增(CHILD_ADDED)、删除(CHILD_REMOVED)、更新(CHILD_UPDATED)操作时，PathChildrenCache中的Listener将会得到通知，PathChildrenCache构造函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PathChildrenCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> cacheData)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PathChildrenCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> cacheData, ThreadFactory threadFactory)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PathChildrenCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> cacheData, <span class="keyword">boolean</span> dataIsCompressed, ThreadFactory threadFactory)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PathChildrenCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> cacheData, <span class="keyword">boolean</span> dataIsCompressed, <span class="keyword">final</span> ExecutorService executorService)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PathChildrenCache</span><span class="params">(CuratorFramework client, String path, <span class="keyword">boolean</span> cacheData, <span class="keyword">boolean</span> dataIsCompressed, <span class="keyword">final</span> CloseableExecutorService executorService)</span></span></span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<blockquote>
+<p>client：curator客户端</p>
+<p>path：缓存节点路径</p>
+<p>cacheData：除了缓存节点状态外是否缓存节点数据。若为true，客户端在接收节点列表变更的同时，也能获取到节点数据内容，若为false，则无法获取数据内容</p>
+<p>threadFactory：线程池工厂，当内部需要开启新的线程执行时，使用该线程池工厂来创建线程</p>
+<p>dataIsCompressed：是否压缩节点数据</p>
+<p>executorService：线程池</p>
+</blockquote>
+<p>PathChildrenCache通过start方法可以传入三种启动模式：</p>
+<blockquote>
+<p>StartMode.NORMAL：异步初始化cache</p>
+<p>StartMode.BUILD_INITIAL_CACHE：同步初始化cache，以及创建cache后就从服务器拉取对应的数据</p>
+<p>POST_INITIALIZED_EVENT：异步初始化cache，初始化完成触发PathChildrenCacheEvent.Type#INITIALIZED事件，cache中Listener会收到该事件的通知</p>
+</blockquote>
+<p>示例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 缓存子节点</span></span><br><span class="line">PathChildrenCache pathChildrenCache = <span class="keyword">new</span> PathChildrenCache(client, <span class="string">"/curatorTest"</span>, <span class="keyword">true</span>);</span><br><span class="line"><span class="comment">// startMode为BUILD_INITIAL_CACHE，cache是初始化完成会发送INITIALIZED事件</span></span><br><span class="line">pathChildrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);</span><br><span class="line">System.out.println(pathChildrenCache.getCurrentData().size());</span><br><span class="line">pathChildrenCache.getListenable().addListener(((client1, event) -&gt; &#123;</span><br><span class="line">    ChildData data = event.getData();</span><br><span class="line">    <span class="keyword">switch</span> (event.getType()) &#123;</span><br><span class="line">      <span class="keyword">case</span> INITIALIZED:</span><br><span class="line">        System.out.println(<span class="string">"子节点cache初始化完成(StartMode为POST_INITIALIZED_EVENT的情况)"</span>);</span><br><span class="line">        System.out.println(<span class="string">"INITIALIZED: "</span> + pathChildrenCache.getCurrentData().size());</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> CHILD_ADDED:</span><br><span class="line">        System.out.println(<span class="string">"添加子节点，path="</span> + data.getPath() + <span class="string">", data="</span> + <span class="keyword">new</span> String(data.getData()));</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> CHILD_UPDATED:</span><br><span class="line">        System.out.println(<span class="string">"更新子节点，path="</span> + data.getPath() + <span class="string">", data="</span> + <span class="keyword">new</span> String(data.getData()));</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> CHILD_REMOVED:</span><br><span class="line">        System.out.println(<span class="string">"删除子节点，path="</span> + data.getPath());</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        System.out.println(event.getType());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;));</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<ul>
+<li><h3 id="完整示例代码"><a href="#完整示例代码" class="headerlink" title="完整示例代码"></a>完整示例代码</h3></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ZKTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">//创建连接</span></span><br><span class="line"><span class="comment">//        CuratorFramework client = CuratorFrameworkFactory.newClient("192.168.226.130:2181", new RetryNTimes(3, 1000));</span></span><br><span class="line">        CuratorFramework client = CuratorFrameworkFactory.builder()</span><br><span class="line">                .connectString(<span class="string">"192.168.226.130:2181"</span>)</span><br><span class="line">                .sessionTimeoutMs(<span class="number">30000</span>)</span><br><span class="line">                .connectionTimeoutMs(<span class="number">15000</span>)</span><br><span class="line">                .retryPolicy(<span class="keyword">new</span> RetryNTimes(<span class="number">3</span>, <span class="number">3000</span>))</span><br><span class="line"><span class="comment">//                .namespace("curatorTest")</span></span><br><span class="line">                .build();</span><br><span class="line">        <span class="comment">//启动zk</span></span><br><span class="line">        client.start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//判断节点是否存在, 存在则删除</span></span><br><span class="line">        Stat test1Stat = client.checkExists().forPath(<span class="string">"/curatorTest/test1"</span>);</span><br><span class="line">        <span class="keyword">if</span> (test1Stat != <span class="keyword">null</span>) &#123;</span><br><span class="line">            client.delete().guaranteed().deletingChildrenIfNeeded().withVersion(-<span class="number">1</span>).forPath(<span class="string">"/curatorTest/test1"</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//创建节点</span></span><br><span class="line">        client.create()</span><br><span class="line">                .creatingParentsIfNeeded()</span><br><span class="line">                .withMode(CreateMode.PERSISTENT)</span><br><span class="line">                .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)</span><br><span class="line">                .forPath(<span class="string">"/curatorTest/test1"</span>, <span class="string">"test1"</span>.getBytes());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取节点信息</span></span><br><span class="line">        test1Stat = <span class="keyword">new</span> Stat();</span><br><span class="line">        <span class="keyword">byte</span>[] test1DataBytes = client.getData().storingStatIn(test1Stat).forPath(<span class="string">"/curatorTest/test1"</span>);</span><br><span class="line">        System.out.println(<span class="string">"test1 stat: "</span> + test1Stat);</span><br><span class="line">        System.out.println(<span class="string">"test1 data: "</span> + <span class="keyword">new</span> String(test1DataBytes));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 更新节点数据</span></span><br><span class="line">        test1Stat = client.setData()</span><br><span class="line">                .withVersion(-<span class="number">1</span>)</span><br><span class="line">                .forPath(<span class="string">"/curatorTest/test1"</span>, <span class="string">"test1DataV2"</span>.getBytes());</span><br><span class="line">        System.out.println(<span class="string">"test1 stat: "</span> + test1Stat);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取所有子节点</span></span><br><span class="line">        Stat childStat = <span class="keyword">new</span> Stat();</span><br><span class="line">        List&lt;String&gt; childs = client.getChildren().storingStatIn(childStat).forPath(<span class="string">"/curatorTest"</span>);</span><br><span class="line">        System.out.println(<span class="string">"curatorTest childs: "</span> + childs);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//        client.delete()</span></span><br><span class="line">        <span class="comment">//                .guaranteed()</span></span><br><span class="line">        <span class="comment">//                .withVersion(-1)</span></span><br><span class="line">        <span class="comment">//                .inBackground(((client1, event) -&gt; &#123;</span></span><br><span class="line">        <span class="comment">//                    System.out.println(event.getPath() + ", data=" + event.getData());</span></span><br><span class="line">        <span class="comment">//                    System.out.println("event type=" + event.getType());</span></span><br><span class="line">        <span class="comment">//                    System.out.println("event code=" + event.getResultCode());</span></span><br><span class="line">        <span class="comment">//                &#125;))</span></span><br><span class="line">        <span class="comment">//                .forPath("/curatorTest/test1");</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 缓存节点</span></span><br><span class="line">        NodeCache nodeCache = <span class="keyword">new</span> NodeCache(client, <span class="string">"/curatorTest/test1"</span>);</span><br><span class="line">        nodeCache.start(<span class="keyword">true</span>);</span><br><span class="line">        nodeCache.getListenable().addListener(() -&gt; &#123;</span><br><span class="line">            System.out.println(<span class="string">"NodeCache:"</span>);</span><br><span class="line">            ChildData childData = nodeCache.getCurrentData();</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> != childData) &#123;</span><br><span class="line">                System.out.println(<span class="string">"path="</span> + childData.getPath() + <span class="string">", data="</span> + <span class="keyword">new</span> String(childData.getData()) + <span class="string">";"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 缓存子节点</span></span><br><span class="line">        PathChildrenCache pathChildrenCache = <span class="keyword">new</span> PathChildrenCache(client, <span class="string">"/curatorTest"</span>, <span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">// startMode为BUILD_INITIAL_CACHE，cache是初始化完成会发送INITIALIZED事件</span></span><br><span class="line">        pathChildrenCache.start(PathChildrenCache.StartMode.BUILD_INITIAL_CACHE);</span><br><span class="line">        System.out.println(pathChildrenCache.getCurrentData().size());</span><br><span class="line">        pathChildrenCache.getListenable().addListener(((client1, event) -&gt; &#123;</span><br><span class="line">            ChildData data = event.getData();</span><br><span class="line">            <span class="keyword">switch</span> (event.getType()) &#123;</span><br><span class="line">                <span class="keyword">case</span> INITIALIZED:</span><br><span class="line">                    System.out.println(<span class="string">"子节点cache初始化完成(StartMode为POST_INITIALIZED_EVENT的情况)"</span>);</span><br><span class="line">                    System.out.println(<span class="string">"INITIALIZED: "</span> + pathChildrenCache.getCurrentData().size());</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> CHILD_ADDED:</span><br><span class="line">                    System.out.println(<span class="string">"添加子节点，path="</span> + data.getPath() + <span class="string">", data="</span> + <span class="keyword">new</span> String(data.getData()));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> CHILD_UPDATED:</span><br><span class="line">                    System.out.println(<span class="string">"更新子节点，path="</span> + data.getPath() + <span class="string">", data="</span> + <span class="keyword">new</span> String(data.getData()));</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> CHILD_REMOVED:</span><br><span class="line">                    System.out.println(<span class="string">"删除子节点，path="</span> + data.getPath());</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    System.out.println(event.getType());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;));</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">20000000</span>);</span><br><span class="line">        client.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#zookeeper第三方开源客户端"><span class="toc-number">1.</span> <span class="toc-text">zookeeper第三方开源客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#curator客户端api介绍"><span class="toc-number">2.</span> <span class="toc-text">curator客户端api介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#创建zookeeper会话-一"><span class="toc-number">2.1.</span> <span class="toc-text">创建zookeeper会话 (一)</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#curator提供的重试策略"><span class="toc-number">2.1.1.</span> <span class="toc-text">curator提供的重试策略</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#创建zookeeper会话-二"><span class="toc-number">2.2.</span> <span class="toc-text">创建zookeeper会话 (二)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#完整示例代码"><span class="toc-number">3.</span> <span class="toc-text">完整示例代码</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
