@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zookeeper笔记 (二) ACL详解 - 朝阳的博客</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Sunny,"> 
+    <meta name="description" content="本文参考地址: 【Zookeeper 学习笔记】—ACL权限控制
+ACL权限控制是使用 schema : id : permission来标识。
+
+schema(权限模式)：鉴权的策略
+id(授权对,"> 
+    <meta name="author" content="Sunny___"> 
+    <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">朝阳的博客</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yoursite.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Zookeeper笔记 (二) ACL详解</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Zookeeper笔记 (二) ACL详解</h1>
+        <div class="stuff">
+            <span>五月 05, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/acl/">acl</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>本文参考地址: <a href="http://cmsblogs.com/?p=4101" target="_blank" rel="noopener">【Zookeeper 学习笔记】—ACL权限控制</a></p>
+<p>ACL权限控制是使用 schema : id : permission来标识。</p>
+<ol>
+<li>schema(权限模式)：鉴权的策略</li>
+<li>id(授权对象)</li>
+<li>permission(权限)</li>
+</ol>
+<p>其特性如下：</p>
+<ol>
+<li>zookeeper的权限控制是基于每个znode节点的，需要对每个节点设置权限</li>
+<li>每个znode支持设置多种权限控制方案和多个权限</li>
+<li>子节点不会继承父节点的权限，客户端无权访问某节点，但可能可以访问它的子节点</li>
+</ol>
+<ul>
+<li><h3 id="schema"><a href="#schema" class="headerlink" title="schema"></a>schema</h3></li>
+</ul>
+<p>zk内置了一些权限控制方案：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>world</td>
+<td>只有一个用户：anyone，代表所有人(默认)</td>
+</tr>
+<tr>
+<td>ip</td>
+<td>使用ip地址认证</td>
+</tr>
+<tr>
+<td>auth</td>
+<td>使用已添加认证的用户认证</td>
+</tr>
+<tr>
+<td>digest</td>
+<td>使用”用户名：密码”方式认证</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3></li>
+</ul>
+<p>授权对象id是指，权限赋予的用户或者一个实体，例如：ip地址或机器。授权模式schema与授权对象id的关系：</p>
+<table>
+<thead>
+<tr>
+<th>权限模式</th>
+<th style="text-align:left">授权对象</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IP</td>
+<td style="text-align:left">一个ip地址或ip段，例如：”192.168.226.130”或”192.168.226.1/24”</td>
+</tr>
+<tr>
+<td>Digest</td>
+<td style="text-align:left">自定义，格式为：”username:BASE64(SHA-1(username:password))”，例如：”foo:dasdKJHkdaOsadOkda8cd=”</td>
+</tr>
+<tr>
+<td>World</td>
+<td style="text-align:left">只有一个ID：”anyone”</td>
+</tr>
+<tr>
+<td>Super</td>
+<td style="text-align:left">与Digest一致</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><h3 id="permission"><a href="#permission" class="headerlink" title="permission"></a>permission</h3></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>权限</th>
+<th>ACL简写</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CREATE</td>
+<td>c</td>
+<td>可以创建子节点</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>d</td>
+<td>可以删除子节点(仅下一级节点)</td>
+</tr>
+<tr>
+<td>READ</td>
+<td>r</td>
+<td>可以读取节点数据及显示子节点列表</td>
+</tr>
+<tr>
+<td>WRITE</td>
+<td>w</td>
+<td>可以设置节点数据</td>
+</tr>
+<tr>
+<td>ADMIN</td>
+<td>a</td>
+<td>可以设置节点访问控制列表权限</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><h3 id="权限相关命令"><a href="#权限相关命令" class="headerlink" title="权限相关命令"></a>权限相关命令</h3></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>getAcl</td>
+<td>读取ACL权限</td>
+</tr>
+<tr>
+<td>setAcl</td>
+<td>设置ACL权限</td>
+</tr>
+<tr>
+<td>addauth</td>
+<td>添加认证用户</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><h3 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h3><h4 id="1-world方案"><a href="#1-world方案" class="headerlink" title="1. world方案"></a>1. world方案</h4></li>
+</ul>
+<blockquote>
+<p>设置方式</p>
+<p>setAcl <path> world:anyone:<acl></acl></path></p>
+</blockquote>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">3</span>] create /node <span class="number">1</span></span><br><span class="line">Created /node</span><br><span class="line"></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">5</span>] getAcl /node</span><br><span class="line"><span class="string">'world,'</span>anyone <span class="comment"># 默认方案</span></span><br><span class="line">: cdrwa</span><br><span class="line"><span class="comment"># 设置权限</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">6</span>] setAcl /node <span class="symbol">world:</span><span class="symbol">anyone:</span>cdrwa</span><br><span class="line">cZxid = <span class="number">0x3b</span></span><br><span class="line">ctime = Sun May <span class="number">05</span> <span class="number">00</span><span class="symbol">:</span><span class="number">41</span><span class="symbol">:</span><span class="number">07</span> PDT <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x3b</span></span><br><span class="line">mtime = Sun May <span class="number">05</span> <span class="number">00</span><span class="symbol">:</span><span class="number">41</span><span class="symbol">:</span><span class="number">07</span> PDT <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x3b</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">1</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">1</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h4 id="2-IP方案"><a href="#2-IP方案" class="headerlink" title="2. IP方案"></a>2. IP方案</h4><blockquote>
+<p>设置方式</p>
+<p>setAcl <path> ip:<ip>:<acl></acl></ip></path></p>
+<p>其中ip可以使具体ip也可以是ip/bit格式，即ip转换为二进制，匹配前bit位，如192.168.0.0/16匹配192.168..</p>
+</blockquote>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">12</span>] create /node1 <span class="number">1</span></span><br><span class="line">Created /node1</span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">13</span>] setAcl /node1 <span class="symbol">ip:</span><span class="number">192.168</span>.<span class="number">226.130</span><span class="symbol">:cdrw</span></span><br><span class="line">cZxid = <span class="number">0x40</span></span><br><span class="line">ctime = Sun May <span class="number">05</span> <span class="number">00</span><span class="symbol">:</span><span class="number">57</span><span class="symbol">:</span><span class="number">14</span> PDT <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x40</span></span><br><span class="line">mtime = Sun May <span class="number">05</span> <span class="number">00</span><span class="symbol">:</span><span class="number">57</span><span class="symbol">:</span><span class="number">14</span> PDT <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x40</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">1</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">1</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用IP非192.168.226.130的机器</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">0</span>] get /node1</span><br><span class="line">Authentication is <span class="keyword">not</span> valid : <span class="regexp">/node1 #没有权限</span></span><br><span class="line"><span class="regexp"></span></span><br><span class="line"><span class="regexp">[zk: localhost:2181(CONNECTED) 1] delete /node</span>1 <span class="comment">#删除成功（因为设置DELETE权限仅对下一级子节点有效，并不包含此节点）</span></span><br></pre></td></tr></table></figure>
+<h4 id="3-Auth方案"><a href="#3-Auth方案" class="headerlink" title="3. Auth方案"></a>3. Auth方案</h4><blockquote>
+<p>设置方式</p>
+<p>addauth digest <user>:<password> #添加认证用户</password></user></p>
+<p>setAcl <path> auth:<user>:<acl></acl></user></path></p>
+</blockquote>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">14</span>] create /node2 <span class="number">1</span></span><br><span class="line">Created /node2</span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">15</span>] addauth digest <span class="symbol">sunny:</span><span class="number">562541</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">16</span>] setAcl /node2 <span class="symbol">auth:</span><span class="symbol">sunny:</span>cdrwa</span><br><span class="line">cZxid = <span class="number">0x42</span></span><br><span class="line">ctime = Sun May <span class="number">05</span> <span class="number">01</span><span class="symbol">:</span><span class="number">03</span><span class="symbol">:</span><span class="number">16</span> PDT <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x42</span></span><br><span class="line">mtime = Sun May <span class="number">05</span> <span class="number">01</span><span class="symbol">:</span><span class="number">03</span><span class="symbol">:</span><span class="number">16</span> PDT <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x42</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">1</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">1</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">17</span>] getAcl /node2</span><br><span class="line"><span class="string">'digest,'</span><span class="symbol">sunny:</span>cRA6w3JNGvZU4c1GD+jVPnif1dM=</span><br><span class="line">: cdrwa</span><br><span class="line"><span class="comment"># 断开会话认证用户就没了</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">0</span>] getAcl /node2</span><br><span class="line">Authentication is <span class="keyword">not</span> valid : <span class="regexp">/node2</span></span><br></pre></td></tr></table></figure>
+<h4 id="4-Digest方案"><a href="#4-Digest方案" class="headerlink" title="4. Digest方案"></a>4. Digest方案</h4><blockquote>
+<p>设置方式</p>
+<p>setAcl <path> digest:<user>:<password>:<acl></acl></password></user></path></p>
+<p>这里的密码是经过SHA1及BASE64处理过的密文，在shell中可以通过如下命令计算：</p>
+<p>echo -n <user>:<password> | openssl dgst -binary -sha1 | openssl base64</password></user></p>
+</blockquote>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># echo -n sunny:562541 | openssl dgst -binary -sha1 | openssl base64</span></span><br><span class="line">cRA6w3JNGvZU4c1GD+jVPnif1dM=</span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">2</span>] create /node3 <span class="number">1</span></span><br><span class="line">Created /node3</span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">3</span>] setAcl /node3 <span class="symbol">digest:</span><span class="symbol">sunny:</span>cRA6w3JNGvZU4c1GD+jVPnif1dM=<span class="symbol">:cdrwa</span></span><br><span class="line">cZxid = <span class="number">0x46</span></span><br><span class="line">ctime = Sun May <span class="number">05</span> <span class="number">01</span><span class="symbol">:</span><span class="number">10</span><span class="symbol">:</span><span class="number">06</span> PDT <span class="number">2019</span></span><br><span class="line">mZxid = <span class="number">0x46</span></span><br><span class="line">mtime = Sun May <span class="number">05</span> <span class="number">01</span><span class="symbol">:</span><span class="number">10</span><span class="symbol">:</span><span class="number">06</span> PDT <span class="number">2019</span></span><br><span class="line">pZxid = <span class="number">0x46</span></span><br><span class="line">cversion = <span class="number">0</span></span><br><span class="line">dataVersion = <span class="number">0</span></span><br><span class="line">aclVersion = <span class="number">1</span></span><br><span class="line">ephemeralOwner = <span class="number">0x0</span></span><br><span class="line">dataLength = <span class="number">1</span></span><br><span class="line">numChildren = <span class="number">0</span></span><br><span class="line">[<span class="symbol">zk:</span> <span class="symbol">localhost:</span><span class="number">2181</span>(CONNECTED) <span class="number">4</span>] getAcl /node3</span><br><span class="line">Authentication is <span class="keyword">not</span> valid : <span class="regexp">/node3 # 没权限</span></span><br><span class="line"><span class="regexp">[zk: localhost:2181(CONNECTED) 5] addauth digest sunny:562541 # 添加认证用户</span></span><br><span class="line"><span class="regexp">[zk: localhost:2181(CONNECTED) 6] getAcl /node</span>3 <span class="comment"># 再次查询</span></span><br><span class="line"><span class="string">'digest,'</span><span class="symbol">sunny:</span>cRA6w3JNGvZU4c1GD+jVPnif1dM=</span><br><span class="line">: cdrwa</span><br></pre></td></tr></table></figure>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#schema"><span class="toc-number">1.</span> <span class="toc-text">schema</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#id"><span class="toc-number">2.</span> <span class="toc-text">id</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#permission"><span class="toc-number">3.</span> <span class="toc-text">permission</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#权限相关命令"><span class="toc-number">4.</span> <span class="toc-text">权限相关命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实战"><span class="toc-number">5.</span> <span class="toc-text">实战</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-world方案"><span class="toc-number">5.1.</span> <span class="toc-text">1. world方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-IP方案"><span class="toc-number">5.2.</span> <span class="toc-text">2. IP方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Auth方案"><span class="toc-number">5.3.</span> <span class="toc-text">3. Auth方案</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-Digest方案"><span class="toc-number">5.4.</span> <span class="toc-text">4. Digest方案</span></a></li></ol></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>
