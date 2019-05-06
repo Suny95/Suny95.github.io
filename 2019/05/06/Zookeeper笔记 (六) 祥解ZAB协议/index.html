@@ -1,0 +1,360 @@
+
+<!DOCTYPE html>
+<html lang class="loading">
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zookeeper笔记 (六) 祥解ZAB协议 - 朝阳的博客</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate">
+    <meta name="keywords" content="Sunny,"> 
+    <meta name="description" content="本文参考地址：【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举
+
+原子广播（ZAB）
+
+zk设计了一种名为原子广播(ZAB)的支持崩溃恢复的一致性协议。基,"> 
+    <meta name="author" content="Sunny___"> 
+    <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <link rel="stylesheet" href="/css/diaspora.css">
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+</head>
+</html>
+<body class="loading">
+    <span id="config-title" style="display:none">朝阳的博客</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yoursite.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Zookeeper笔记 (六) 祥解ZAB协议</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Zookeeper笔记 (六) 祥解ZAB协议</h1>
+        <div class="stuff">
+            <span>五月 06, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>本文参考地址：<a href="http://cmsblogs.com/?p=4113" target="_blank" rel="noopener">【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举</a></p>
+<ul>
+<li><h3 id="原子广播（ZAB）"><a href="#原子广播（ZAB）" class="headerlink" title="原子广播（ZAB）"></a>原子广播（ZAB）</h3></li>
+</ul>
+<p>zk设计了一种名为原子广播(ZAB)的支持崩溃恢复的一致性协议。基于该协议，zk实现了一种主从模式的系统架构来保持集群中各个副本之间的数据一致性，确保了写操作的一致性和可用性。</p>
+<p>根据ZAB协议，所有写操作都必须通过leader完成，leader写入本地日志后再复制到所有的follower节点。</p>
+<p>一旦leader节点无法工作，ZAB协议能够自动从follower节点中重新选出一个合适的替代者，即新的leader，该过程称为领导选举。该领导选举过程，是ZAB协议中最为重要和复杂的过程。</p>
+<ul>
+<li><h4 id="写leader"><a href="#写leader" class="headerlink" title="写leader"></a>写leader</h4></li>
+</ul>
+<p>通过leader进行写操作的流程如下图所示：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7db011b1e4744c2e92eadbc427d28726.jpeg" alt="image"></p>
+<blockquote>
+<ol>
+<li>客户端向leader发起写请求</li>
+<li>leader将写请求以proposal的形式发给所有follower并等待<code>ACK(follower回复消息)</code></li>
+<li>follower收到leader的proposal后返回ACK</li>
+<li>leader得到过半数的ACK(leader对自己默认有一个ACK)后向所有的follower和Observer发送Commit</li>
+<li>leader将处理结果返回给客户端</li>
+<li>leader不需要得到Observer的ACK，即Observer无投票权</li>
+<li>Observer虽然无投票权，但仍需同步leader的数据从而在处理读请求时可以返现尽可能新的数据</li>
+</ol>
+</blockquote>
+<ul>
+<li><h4 id="写follower-Observer"><a href="#写follower-Observer" class="headerlink" title="写follower/Observer"></a>写follower/Observer</h4></li>
+</ul>
+<p>通过follower/Observer进行写操作的流程如下图所示：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/87b9d739061c452d8559dcb0ad9833c6.jpeg" alt="image"></p>
+<blockquote>
+<ol>
+<li>follower/Observer均可接受写请求，但不能直接处理，而是将写请求转发给leader处理</li>
+<li>除了多了一步转发，其他流程与直接写leader一致</li>
+</ol>
+</blockquote>
+<ul>
+<li><h4 id="读操作"><a href="#读操作" class="headerlink" title="读操作"></a>读操作</h4></li>
+</ul>
+<p>leader/Observer/follower都可直接处理读请求：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/fd0b7a4ca80949f1823e2d4e28610ea1.jpeg" alt="image"></p>
+<blockquote>
+<ol>
+<li>由于处理读请求不需要服务器之间的交互，follower/Observer越多，整体可处理的读请求量越大。即读性能越好</li>
+</ol>
+</blockquote>
+<ul>
+<li><h4 id="支持的领导选举算法"><a href="#支持的领导选举算法" class="headerlink" title="支持的领导选举算法"></a>支持的领导选举算法</h4></li>
+</ul>
+<p>通过electionAlg配置项设置zk用于领导选举的算法。</p>
+<p>到3.4.10版本为止，可选项有：</p>
+<blockquote>
+<ul>
+<li>0 基于UDP的LeaderElection</li>
+<li>1 基于UDP的FastLeaderElection</li>
+<li>2 基于UDP和认证的FastLeaderElection</li>
+<li>3 基于TCP的FastLeaderElection</li>
+</ul>
+</blockquote>
+<p>在3.4.10版本中，默认值为3。另外三种算法已被弃用，并且计划在之后的版本中彻底删除而且不再支持。</p>
+<h3 id="FastLeaderElection原理"><a href="#FastLeaderElection原理" class="headerlink" title="FastLeaderElection原理"></a>FastLeaderElection原理</h3><ul>
+<li><strong>1、myid</strong></li>
+</ul>
+<p>每个zk服务器都需要在数据文件夹（data）下创建一个名为myid的文件，该文件包含整个zk集群中唯一的id(整数)。例如：某zk集群包含三台服务器，hostname分别为zoo1、zoo2和zoo3，其中myid分别为1、2和3，则在配置文件中其id与hostname必须一一对应。如下所示，在该配置项里的server.后面的数据即为myid</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">server.<span class="number">1</span>=<span class="symbol">zoo1:</span><span class="number">2888</span><span class="symbol">:</span><span class="number">3888</span></span><br><span class="line">server.<span class="number">2</span>=<span class="symbol">zoo2:</span><span class="number">2888</span><span class="symbol">:</span><span class="number">3888</span></span><br><span class="line">server.<span class="number">3</span>=<span class="symbol">zoo3:</span><span class="number">2888</span><span class="symbol">:</span><span class="number">3888</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>2、zxid</strong></li>
+</ul>
+<p>类似于RDBMS中的事务id，用于标识一次更新操作的proposal id。为了保证顺序性，该zxid必须单独递增。因此zk使用一个64位的数来表示，高32位是leader的epoch（周期），从1开始，每次选出新的leader，epoch加一。低32位为该epoch内的序号，每次epoch变化，都将低32位的序号重置。这样就保证了zxid的全局递增性。</p>
+<ul>
+<li><strong>3、服务器状态</strong></li>
+</ul>
+<blockquote>
+<ul>
+<li>LOOKING：不确定leader状态。表示集群中没有leader，会发起leader选举。</li>
+<li>FOLLOWING：跟随者状态。表明当前服务器角色是Follower，并且它知道Leader是谁。</li>
+<li>LEADING：领导者状态。表明当前服务器角色是Leader，它会维护与FOllower间的心跳。</li>
+<li>OBSERVING：观察者状态。表明当前服务器角色是Observer，不参与选举，不参与投票。</li>
+</ul>
+</blockquote>
+<ul>
+<li><strong>4、选票数据结构</strong></li>
+</ul>
+<p>每个服务器在进行领导选举时，会发送如下关键信息：</p>
+<blockquote>
+<ul>
+<li>logicClock：每个服务器会维护一个自增整数，表明该服务器发起的是第多少轮的投票</li>
+<li>state：当前服务器的状态</li>
+<li>self_id：当前服务器的myid</li>
+<li>self_zxid：当前服务器所保存的数据的最大zxid</li>
+<li>vote_id：被推举的服务器的myid</li>
+<li>vote_zxid：被推举的服务器所保存的数据的最大zxid</li>
+</ul>
+</blockquote>
+<ul>
+<li><strong>5、投票流程</strong></li>
+</ul>
+<p><strong>自增选举轮次</strong></p>
+<p>所有有效的投票必须在同一轮次。每个服务器在开始投票时，会先对自己的logicClock进行自增操作。</p>
+<p><strong>初始化选票</strong></p>
+<p>每个服务器在广播自己选票前，会先将自己的投票箱清空。该投票箱记录了所收到的选票。例：服务器2投票给服务器3，服务器3投票给服务器1，则服务器1的投票箱为(2，3)，(3，1)，(1，1)。票箱中只会记录每一投票者的最后一票，如投票者更新自己的选票，则其他服务器收到该新选票后会在自己的票箱中更新该服务器的选票。</p>
+<p><strong>发送初始化选票</strong></p>
+<p>每个服务器最开始都是通过广播把票投给自己</p>
+<p><strong>接收外部选票</strong></p>
+<p>服务器会尝试从其他服务器获取投票，并记入自己的投票箱。若无法获取任何外部投票，则会确认自己是否与集群中其他服务器保持着有效连接。如果是，则再次发送自己的投票，反之则马上与之建立连接。</p>
+<p><strong>判断选举轮次</strong></p>
+<p>收到外部投票后，首先根据投票信息中包含的logicClock来进行不同处理：</p>
+<ol>
+<li><p>外部投票的logicClock大于自己的logicClock：说明该服务器的选举轮次落后其他服务器的选举轮次，立即清空自己的投票箱并将自己的logicClock更新为收到的logicClock，然后再对比自己之前的投票与收到的投票以确定是否需要变更自己的投票，最终再次将自己的投票广播出去。</p>
+</li>
+<li><p>外部投票的logicClock小于自己的logicClock：当前服务器直接忽略该投票，继续处理下一个处理。</p>
+</li>
+<li><p>外部投票的logicClock与自己相等：进行选票PK</p>
+</li>
+</ol>
+<p><strong>选票PK</strong></p>
+<p>选票PK是基于(self_id，self_zxid)与(vote_id，vote_zxid)对比</p>
+<ol>
+<li><p>外部投票的logicClock大于自己的logicClock：将自己的logicClock及自己选票的logicClock变更为收到的logicClock。</p>
+</li>
+<li><p>外部投票的logicClock与自己的logicClock一致：对比二者的vote_zxid，若外部投票的vote_zxid较大，将将自己的vote_zxid与vote_myid更新为收到的vote_zxid和vote_myid并广播出去，另外将收到的票与自己更新后的票放入自己的票箱。若票箱内已存在(self_myid，self_zxid)相同的选票，则直接覆盖。</p>
+</li>
+<li><p>若二者vote_zxid一致：比较二者的vote_，若外部的vote_myid较大，则将自己的vote_myid更新为收到的vote_myid并广播出去，另外将收到的票与自己更新后的票放入自己的票箱。</p>
+</li>
+</ol>
+<p><strong>统计选票</strong></p>
+<p>如果已经确定有过半服务器认可自己的投票，则终止投票。否则继续接收其他服务器的投票。</p>
+<p><strong>更新服务器状态</strong></p>
+<p>投票终止后，服务器更新自身状态。若过半的票投给了自己，则自身状态更新为LEADING，否则更新为FOLLOWING。</p>
+<p><strong>集群领导选举</strong></p>
+<p><strong>1、初始投票给自己</strong></p>
+<p>集群刚启动时，所有服务器的logicClock为1，zxid为0。各服务器初始化后，都投票给自己，并将自己的票存入自己的票箱，如下图所示：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/e79e5f68160c4443ae9ec2ea6cd9f417.jpeg" alt="image"></p>
+<blockquote>
+<p>(1，1，0)：</p>
+<p>第一位代表投出该票的服务器的logicClock</p>
+<p>第二位表示服务器的myid</p>
+<p>第三位表示服务器最大的zxid</p>
+</blockquote>
+<p><strong>2、更新选票</strong></p>
+<p>服务器收到外部投票后，进行选票PK，相应更新自己的选票并广播出去，并将合适的选票存入自己的票箱：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/21602b7ff75e44a7b509bd5fb2b0785c.jpeg" alt="image"></p>
+<p>服务器1收到服务器2的选票1, 2, 0）和服务器3的选票（1, 3, 0）后，由于所有的logicClock都相等，所有的zxid都相等，因此根据myid判断应该将自己的选票按照服务器3的选票更新为（1, 3, 0），并将自己的票箱全部清空，再将服务器3的选票与自己的选票存入自己的票箱，接着将自己更新后的选票广播出去。此时服务器1票箱内的选票为(1, 3)，(3, 3)。同理，服务器2收到服务器3的选票后也将自己的选票更新为（1, 3, 0）并存入票箱然后广播。此时服务器2票箱内的选票为(2, 3)，(3, ,3)。服务器3根据上述规则，无须更新选票，自身的票箱内选票仍为（3, 3）。服务器1与服务器2更新后的选票广播出去后，由于三个服务器最新选票都相同，最后三者的票箱内都包含三张投给服务器3的选票。</p>
+<p><strong>3、根据选票确定角色</strong></p>
+<p>根据上述选票，三个服务器一致认为此时服务器3应该是Leader。因此服务器1和2都进入FOLLOWING状态，而服务器3进入LEADING状态。之后Leader发起并维护与Follower间的心跳。</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/6f07c1ece9144bcd957ca2b2c3917ddf.jpeg" alt="image"></p>
+<p><strong>Follower重启选举</strong></p>
+<p><strong>1、Follower重启投票给自己</strong></p>
+<p>Follower重启，或者发生网络分区后找不到Leader，会进入LOOKING状态并发起新的一轮投票。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/5d682ff632324eb182544ab0691908b7.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/5d682ff632324eb182544ab0691908b7.jpeg" alt="img"></a></p>
+<p><strong>2、发现已有Leader后成为Follower</strong></p>
+<p>服务器3收到服务器1的投票后，将自己的状态LEADING以及选票返回给服务器1。服务器2收到服务器1的投票后，将自己的状态FOLLOWING及选票返回给服务器1。此时服务器1知道服务器3是Leader，并且通过服务器2与服务器3的选票可以确定服务器3确实得到了超过半数的选票。因此服务器1进入FOLLOWING状态。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/ca8d8cfabe6d4c2086e7bc5b40979ce4.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/ca8d8cfabe6d4c2086e7bc5b40979ce4.jpeg" alt="img"></a></p>
+<p><strong>Leader重启选举</strong></p>
+<p><strong>1、Follower发起新投票</strong></p>
+<p>Leader（服务器3）宕机后，Follower（服务器1和2）发现Leader不工作了，因此进入LOOKING状态并发起新的一轮投票，并且都将票投给自己。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/85cea8558ca84c9fb3cd1feae4fe611f.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/85cea8558ca84c9fb3cd1feae4fe611f.jpeg" alt="img"></a></p>
+<p><strong>2、广播更新选票</strong></p>
+<p>服务器1和2根据外部投票确定是否要更新自身的选票。这里有两种情况：</p>
+<p>服务器1和2的zxid相同。例如在服务器3宕机前服务器1与2完全与之同步。此时选票的更新主要取决于myid的大小</p>
+<p>服务器1和2的zxid不同。在旧Leader宕机之前，其所主导的写操作，只需过半服务器确认即可，而不需所有服务器确认。换句话说，服务器1和2可能一个与旧Leader同步（即zxid与之相同）另一个不同步（即zxid比之小）。此时选票的更新主要取决于谁的zxid较大</p>
+<p>在上图中，服务器1的zxid为11，而服务器2的zxid为10，因此服务器2将自身选票更新为（3, 1, 11），如下图所示。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/2cec4cfe93214094bf3651c89b915c26.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/2cec4cfe93214094bf3651c89b915c26.jpeg" alt="img"></a></p>
+<p><strong>3、选出新Leader</strong></p>
+<p>经过上一步选票更新后，服务器1与服务器2均将选票投给服务器1，因此服务器2成为Follower，而服务器1成为新的Leader并维护与服务器2的心跳。</p>
+<p>[<img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/e91d1bd8a3af48bfb51287143ad87641.jpeg" alt="img"></p>
+<p><strong>4、旧Leader恢复后发起选举</strong></p>
+<p>旧的Leader恢复后，进入LOOKING状态并发起新一轮领导选举，并将选票投给自己。此时服务器1会将自己的LEADING状态及选票（3, 1, 11）返回给服务器3，而服务器2将自己的FOLLOWING状态及选票（3, 1, 11）返回给服务器3。如下图所示。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/e91d1bd8a3af48bfb51287143ad87641.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7ad67a3837184c06963471b0fd1155dd.jpeg" alt="img](https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7ad67a3837184c06963471b0fd1155dd.jpeg)"></a></p>
+<p><strong>5、旧Leader成为Follower</strong></p>
+<p>服务器3了解到Leader为服务器1，且根据选票了解到服务器1确实得到过半服务器的选票，因此自己进入FOLLOWING状态。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/70e35737fb934074840a6d1d759db320.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/70e35737fb934074840a6d1d759db320.jpeg" alt="img"></a></p>
+<p><strong>Commit过的数据不丢失</strong></p>
+<p><strong>1、Failover前状态</strong></p>
+<p>为更好演示Leader Failover过程，本例中共使用5个ZooKeeper服务器。A作为Leader，共收到P1、P2、P3三条消息，并且Commit了1和2，且总体顺序为P1、P2、C1、P3、C2。根据顺序性原则，其它Follower收到的消息的顺序肯定与之相同。其中B与A完全同步，C收到P1、P2、C1，D收到P1、P2，E收到P1，如下图所示。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/2e7f5a41cdb44b6f96cf5d103b3c99e1.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/2e7f5a41cdb44b6f96cf5d103b3c99e1.jpeg" alt="img"></a></p>
+<p>这里要注意：</p>
+<p>由于A没有C3，意味着收到P3的服务器的总个数不会超过一半，也即包含A在内最多只有两台服务器收到P3。在这里A和B收到P3，其它服务器均未收到P3</p>
+<p>由于A已写入C1、C2，说明它已经Commit了P1、P2，因此整个集群有超过一半的服务器，即最少三个服务器收到P1、P2。在这里所有服务器都收到了P1，除E外其它服务器也都收到了P2</p>
+<p><strong>2、选出新Leader</strong></p>
+<p>旧Leader也即A宕机后，其它服务器根据上述FastLeaderElection算法选出B作为新的Leader。C、D和E成为Follower且以B为Leader后，会主动将自己最大的zxid发送给B，B会将Follower的zxid与自身zxid间的所有被Commit过的消息同步给Follower，如下图所示。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7e449b6c177b459a9365d7552b753f81.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7e449b6c177b459a9365d7552b753f81.jpeg" alt="img"></a></p>
+<p>在上图中：</p>
+<p>P1和P2都被A Commit，因此B会通过同步保证P1、P2、C1与C2都存在于C、D和E中</p>
+<p>P3由于未被A Commit，同时幸存的所有服务器中P3未存在于大多数据服务器中，因此它不会被同步到其它Follower</p>
+<p><strong>3、通知Follower可对外服务</strong></p>
+<p>同步完数据后，B会向D、C和E发送NEWLEADER命令并等待大多数服务器的ACK（下图中D和E已返回ACK，加上B自身，已经占集群的大多数），然后向所有服务器广播UPTODATE命令。收到该命令后的服务器即可对外提供服务。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/04dd1963c4874e37b60fe2e1d0ba9d7c.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/04dd1963c4874e37b60fe2e1d0ba9d7c.jpeg" alt="img"></a></p>
+<p><strong>未Commit过的消息对客户端不可见</strong></p>
+<p>在上例中，P3未被A Commit过，同时因为没有过半的服务器收到P3，因此B也未Commit P3（如果有过半服务器收到P3，即使A未Commit P3，B会主动Commit P3，即C3），所以它不会将P3广播出去。</p>
+<p>具体做法是，B在成为Leader后，先判断自身未Commit的消息（本例中即P3）是否存在于大多数服务器中从而决定是否要将其Commit。然后B可得出自身所包含的被Commit过的消息中的最小zxid（记为min_zxid）与最大zxid（记为max_zxid）。C、D和E向B发送自身Commit过的最大消息zxid（记为max_zxid）以及未被Commit过的所有消息（记为zxid_set）。B根据这些信息作出如下操作：</p>
+<p>如果Follower的max_zxid与Leader的max_zxid相等，说明该Follower与Leader完全同步，无须同步任何数据</p>
+<p>如果Follower的max_zxid在Leader的(min_zxid，max_zxid)范围内，Leader会通过TRUNC命令通知Follower将其zxid_set中大于Follower的max_zxid（如果有）的所有消息全部删除</p>
+<p>上述操作保证了未被Commit过的消息不会被Commit从而对外不可见。</p>
+<p>上述例子中Follower上并不存在未被Commit的消息。但可考虑这种情况，如果将上述例子中的服务器数量从五增加到七，服务器F包含P1、P2、C1、P3，服务器G包含P1、P2。此时服务器F、A和B都包含P3，但是因为票数未过半，因此B作为Leader不会Commit P3，而会通过TRUNC命令通知F删除P3。如下图所示。</p>
+<p><a href="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/23f89673d41a4e2fbdd4fe301cfa321f.jpeg" target="_blank" rel="noopener"><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/23f89673d41a4e2fbdd4fe301cfa321f.jpeg" alt="img"></a></p>
+<ul>
+<li>小结</li>
+</ul>
+<p>由于使用主从复制模式，所有的写操作都要由Leader主导完成，而读操作可通过任意节点完成，因此ZooKeeper读性能远好于写性能，更适合读多写少的场景。</p>
+<p>虽然使用主从复制模式，同一时间只有一个Leader，但是Failover机制保证了集群不存在单点失败（SPOF）的问题。</p>
+<p>ZAB协议保证了Failover过程中的数据一致性。</p>
+<p>服务器收到数据后先写本地文件再进行处理，保证了数据的持久性。</p>
+<p>+ </p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#原子广播（ZAB）"><span class="toc-number">1.</span> <span class="toc-text">原子广播（ZAB）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#写leader"><span class="toc-number">1.1.</span> <span class="toc-text">写leader</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#写follower-Observer"><span class="toc-number">1.2.</span> <span class="toc-text">写follower/Observer</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#读操作"><span class="toc-number">1.3.</span> <span class="toc-text">读操作</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#支持的领导选举算法"><span class="toc-number">1.4.</span> <span class="toc-text">支持的领导选举算法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#FastLeaderElection原理"><span class="toc-number">2.</span> <span class="toc-text">FastLeaderElection原理</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+<script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/diaspora.js"></script>
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</html>

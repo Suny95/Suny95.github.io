@@ -5,12 +5,16 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive: 2019/4</title>
+    <title>Zookeeper笔记 (六) 图解ZAB协议、分布式锁与领导选举 - 朝阳的博客</title>
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Sunny,"> 
-    
+    <meta name="description" content="本文参考地址：【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举
+
+原子广播（ZAB）
+
+zk设计了一种名为原子广播(ZAB)的支持崩溃恢复的一致性协议。基,"> 
     <meta name="author" content="Sunny___"> 
     <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -30,74 +34,96 @@
 <body class="loading">
     <span id="config-title" style="display:none">朝阳的博客</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 13篇</h2>
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-30</time>
-                          <a target="_self" href="/2019/04/30/Zookeeper笔记 (二) Znode详解/">Zookeeper笔记 (二) Znode详解</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-30</time>
-                          <a target="_self" href="/2019/04/30/Zookeeper笔记 (一) zookeeper介绍/">Zookeeper笔记 (一) zookeeper介绍</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-28</time>
-                          <a target="_self" href="/2019/04/28/多线程笔记 (六) J.U.C之Condition/">多线程笔记 (六) J.U.C之Condition</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-28</time>
-                          <a target="_self" href="/2019/04/28/多线程笔记 (五) 生产者消费者线程模型/">多线程笔记 (五) 生产者消费者线程模型</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-26</time>
-                          <a target="_self" href="/2019/04/26/多线程笔记 (四) 线程池介绍/">多线程笔记 (四) 线程池介绍</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-25</time>
-                          <a target="_self" href="/2019/04/25/多线程笔记 (三) 线程锁原理/">多线程笔记 (三) 线程锁原理</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-24</time>
-                          <a target="_self" href="/2019/04/24/多线程笔记 (二) 线程同步与锁/">多线程笔记 (二) 线程同步与锁</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-04-22</time>
-                          <a target="_self" href="/2019/04/22/多线程笔记 (一) 线程简记/">多线程笔记 (一) 线程简记</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="icon-home image-icon" href="javascript:;" data-url="http://yoursite.com"></a>
+    <div title="播放/暂停" class="icon-play"></div>
+    <h3 class="subtitle">Zookeeper笔记 (六) 图解ZAB协议、分布式锁与领导选举</h3>
+    <div class="social">
+        <!--<div class="like-icon">-->
+            <!--<a href="javascript:;" class="likeThis active"><span class="icon-like"></span><span class="count">76</span></a>-->
+        <!--</div>-->
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class="main">
+        <h1 class="title">Zookeeper笔记 (六) 图解ZAB协议、分布式锁与领导选举</h1>
+        <div class="stuff">
+            <span>五月 06, 2019</span>
+            
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+
+
+        </div>
+        <div class="content markdown">
+            <p>本文参考地址：<a href="http://cmsblogs.com/?p=4113" target="_blank" rel="noopener">【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举</a></p>
+<ul>
+<li><h3 id="原子广播（ZAB）"><a href="#原子广播（ZAB）" class="headerlink" title="原子广播（ZAB）"></a>原子广播（ZAB）</h3></li>
+</ul>
+<p>zk设计了一种名为原子广播(ZAB)的支持崩溃恢复的一致性协议。基于该协议，zk实现了一种主从模式的系统架构来保持集群中各个副本之间的数据一致性，确保了写操作的一致性和可用性。</p>
+<p>根据ZAB协议，所有写操作都必须通过leader完成，leader写入本地日志后再复制到所有的follower节点。</p>
+<p>一旦leader节点无法工作，ZAB协议能够自动从follower节点中重新选出一个合适的替代者，即新的leader，该过程称为领导选举。该领导选举过程，是ZAB协议中最为重要和复杂的过程。</p>
+<blockquote>
+<ul>
+<li>写leader</li>
+</ul>
+</blockquote>
+<p>通过leader进行写操作的流程如下图所示：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/7db011b1e4744c2e92eadbc427d28726.jpeg" alt="image"></p>
+<blockquote>
+<ol>
+<li>客户端向leader发起写请求</li>
+<li>leader将写请求以proposal的形式发给所有follower并等待<code>ACK(follower回复消息)</code></li>
+<li>follower收到leader的proposal后返回ACK</li>
+<li>leader得到过半数的ACK(leader对自己默认有一个ACK)后向所有的follower和Observer发送Commit</li>
+<li>leader将处理结果返回给客户端</li>
+<li>leader不需要得到Observer的ACK，即Observer无投票权</li>
+<li>Observer虽然无投票权，但仍需同步leader的数据从而在处理读请求时可以返现尽可能新的数据</li>
+</ol>
+</blockquote>
+<blockquote>
+<ul>
+<li>写follower/Observer</li>
+</ul>
+</blockquote>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src>
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        <li title="0" data-url="http://link.hhtjim.com/163/5146554.mp3"></li>
+                    
+                        <li title="1" data-url="http://link.hhtjim.com/qq/001faIUs4M2zna.mp3"></li>
+                    
+                </ul>
+            
+        </div>
+        
+
+    </div>
+    
+        <div class="side">
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#原子广播（ZAB）"><span class="toc-number">1.</span> <span class="toc-text">原子广播（ZAB）</span></a></li></ol>
+        </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 <script src="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
 <script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>

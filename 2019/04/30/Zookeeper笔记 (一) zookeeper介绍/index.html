@@ -14,7 +14,7 @@
 
 zookeeper是什么
 
-zookeeper是一个高性能、开元的分布式应用协调服务，它提供了简单原始的功能，分布式应,"> 
+zookeeper是一个高性能、开源的分布式应用协调服务，它提供了简单原始的功能，分布式应,"> 
     <meta name="author" content="Sunny___"> 
     <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -70,7 +70,7 @@ zookeeper是一个高性能、开元的分布式应用协调服务，它提供�
 <ul>
 <li><h3 id="zookeeper是什么"><a href="#zookeeper是什么" class="headerlink" title="zookeeper是什么"></a>zookeeper是什么</h3></li>
 </ul>
-<p>zookeeper是一个高性能、开元的分布式应用协调服务，它提供了简单原始的功能，分布式应用可以基于它实现更高级的服务，比如实现同步(分布式锁)、配置管理、集群管理。它被设计为易于编程，使用文件系统目录树作为数据模型。服务端使用Java语言编写，并且提供了Java和C语言的客户端。</p>
+<p>zookeeper是一个高性能、开源的分布式应用协调服务，它提供了简单原始的功能，分布式应用可以基于它实现更高级的服务，比如实现同步(分布式锁)、配置管理、集群管理。它被设计为易于编程，使用文件系统目录树作为数据模型。服务端使用Java语言编写，并且提供了Java和C语言的客户端。</p>
 <ul>
 <li><h3 id="zookeeper数据模型"><a href="#zookeeper数据模型" class="headerlink" title="zookeeper数据模型"></a>zookeeper数据模型</h3></li>
 </ul>
@@ -121,7 +121,7 @@ zookeeper是一个高性能、开元的分布式应用协调服务，它提供�
 <ul>
 <li>Leader：为客户端提供读写服务，一个zk集群同一时间只会有一个实际工作的leader，它会发起并维护各Follower及Observer间的心跳。所有写操作必须要通过leader完成再由leader将写操作广播给其他服务器</li>
 <li>Follower：为客户端提供读服务，客户端到Follower的写请求会转交给Leader，Follower参与Leader选举</li>
-<li>Observer：为客户端提供读服务，不参与Leader的选举，一般是为了增强zk集群的读请求并发能力a</li>
+<li>Observer：为客户端提供读服务，不参与Leader的选举，一般是为了增强zk集群的读请求并发能力</li>
 </ul>
 <blockquote>
 <p>会话(Session)</p>
