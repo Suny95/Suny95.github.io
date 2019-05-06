@@ -100,20 +100,24 @@ watcher机制是zookeeper最重要的三大特性数据节点znode、watcher机�
 <li>watcherManager</li>
 </ul>
 <blockquote>
-<p>zk服务端watcher的管理者</p>
-<p>从两个维度维护watcher</p>
-<p>watchTable从数据节点的粒度来维护</p>
-<p>watcher2Paths从watcher的粒度来维护</p>
-<p>负责watcher事件的触发</p>
+<ul>
+<li>zk服务端watcher的管理者</li>
+<li>从两个维度维护watcher</li>
+<li>watchTable从数据节点的粒度来维护</li>
+<li>watcher2Paths从watcher的粒度来维护</li>
+<li>负责watcher事件的触发</li>
+</ul>
 </blockquote>
 <ul>
 <li>客户端回调watcher</li>
 </ul>
 <blockquote>
-<p>反序列化，将字节流转换成WatcherEvent对象</p>
-<p>处理chrootPath。获取节点的根节点路径，然后在搜索树</p>
-<p>还原watchedEvent：把watcherEvent对象转换成WatchedEvent。主要把zk服务器的watchedEvent事件变为watcherEvent，标为已watch触发</p>
-<p>回调watcher：把watchedEvent对象交给eventThread线程。eventThread线程主要是负责从客户端的zkWatchManager中取出watcher，并放入waitingEvents队列中，然后供客户端获取。</p>
+<ul>
+<li>反序列化，将字节流转换成WatcherEvent对象</li>
+<li>处理chrootPath。获取节点的根节点路径，然后在搜索树</li>
+<li>还原watchedEvent：把watcherEvent对象转换成WatchedEvent。主要把zk服务器的watchedEvent事件变为watcherEvent，标为已watch触发</li>
+<li>回调watcher：把watchedEvent对象交给eventThread线程。eventThread线程主要是负责从客户端的zkWatchManager中取出watcher，并放入waitingEvents队列中，然后供客户端获取。</li>
+</ul>
 </blockquote>
 </li>
 </ul>
