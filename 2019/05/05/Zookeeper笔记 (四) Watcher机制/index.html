@@ -120,7 +120,16 @@ watcher机制是zookeeper最重要的三大特性数据节点znode、watcher机�
 </ul>
 </blockquote>
 </li>
+<li><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3></li>
 </ul>
+<blockquote>
+<ul>
+<li>主动推送：watch被触发时，由服务端主动将更新推送给客户端，不需要客户端轮询。</li>
+<li>一次性：数据变化时，watch只会被触发一次。若客户端想得到后续更新的通知，必须在watch触发后重新注册一个watch。</li>
+<li>可见性：如果一个客户端在读请求中附带watch，watch被触发的同时再次读取数据，客户端在得到watch消息之前无法看到更新后的数据。更新通知先于更新结果。</li>
+<li>顺序性：如果多个更新触发了多个watch，那么watch被触发的顺序与更新顺序一直。</li>
+</ul>
+</blockquote>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -141,7 +150,7 @@ watcher机制是zookeeper最重要的三大特性数据节点znode、watcher机�
     </div>
     
         <div class="side">
-            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watcher原理框架"><span class="toc-number">2.</span> <span class="toc-text">watcher原理框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watcher注册过程"><span class="toc-number">3.</span> <span class="toc-text">watcher注册过程</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watcher原理框架"><span class="toc-number">2.</span> <span class="toc-text">watcher原理框架</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#watcher注册过程"><span class="toc-number">3.</span> <span class="toc-text">watcher注册过程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#特点"><span class="toc-number">4.</span> <span class="toc-text">特点</span></a></li></ol>
         </div>
     
 </div>

@@ -119,9 +119,9 @@ zookeeper是一个高性能、开元的分布式应用协调服务，它提供�
 <p>集群角色</p>
 </blockquote>
 <ul>
-<li>Leader：为客户端提供读写服务</li>
+<li>Leader：为客户端提供读写服务，一个zk集群同一时间只会有一个实际工作的leader，它会发起并维护各Follower及Observer间的心跳。所有写操作必须要通过leader完成再由leader将写操作广播给其他服务器</li>
 <li>Follower：为客户端提供读服务，客户端到Follower的写请求会转交给Leader，Follower参与Leader选举</li>
-<li>Observer：为客户端提供读服务，不参与Leader的选举，一般是为了增强zk集群的读请求并发能力</li>
+<li>Observer：为客户端提供读服务，不参与Leader的选举，一般是为了增强zk集群的读请求并发能力a</li>
 </ul>
 <blockquote>
 <p>会话(Session)</p>
