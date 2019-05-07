@@ -11,7 +11,15 @@
     <meta name="google" content="notranslate">
     <meta name="keywords" content="Sunny,"> 
     <meta name="description" content="本文参考地址：【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举
-"> 
+
+分布式锁与领导选举关键点
+
+
+
+最多一个获取锁 / 成为Leader
+
+
+对于分布式锁（,"> 
     <meta name="author" content="Sunny___"> 
     <link rel="alternative" href="atom.xml" title="朝阳的博客" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -58,12 +66,130 @@
         <div class="stuff">
             <span>五月 06, 2019</span>
             
-  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
+  <ul class="post-tags-list"><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/ZAB/">ZAB</a></li><li class="post-tags-list-item"><a class="post-tags-list-link" href="/tags/zookeeper/">zookeeper</a></li></ul>
 
 
         </div>
         <div class="content markdown">
             <p>本文参考地址：<a href="http://cmsblogs.com/?p=4113" target="_blank" rel="noopener">【Zookeeper 学习笔记】—实例详解ZooKeeper ZAB协议、分布式锁与领导选举</a></p>
+<ul>
+<li><h3 id="分布式锁与领导选举关键点"><a href="#分布式锁与领导选举关键点" class="headerlink" title="分布式锁与领导选举关键点"></a>分布式锁与领导选举关键点</h3></li>
+</ul>
+<blockquote>
+<ul>
+<li><h5 id="最多一个获取锁-成为Leader"><a href="#最多一个获取锁-成为Leader" class="headerlink" title="最多一个获取锁 / 成为Leader"></a>最多一个获取锁 / 成为Leader</h5></li>
+</ul>
+</blockquote>
+<p>对于分布式锁（这里特指排它锁）而言，任意时刻，最多只有一个进程（对于单进程内的锁而言是单线程）可以获得锁。</p>
+<p>对于领导选举而言，任意时间，最多只有一个成功当选为Leader。否则即出现脑裂（Split brain）</p>
+<blockquote>
+<ul>
+<li><h5 id="锁重入-确认自己是Leader"><a href="#锁重入-确认自己是Leader" class="headerlink" title="锁重入 / 确认自己是Leader"></a>锁重入 / 确认自己是Leader</h5></li>
+</ul>
+</blockquote>
+<p>对于分布式锁，需要保证获得锁的进程在释放锁之前可再次获得锁，即锁的可重入性。</p>
+<p>对于领导选举，Leader需要能够确认自己已经获得领导权，即确认自己是Leader。</p>
+<blockquote>
+<ul>
+<li><h5 id="释放锁-放弃领导权"><a href="#释放锁-放弃领导权" class="headerlink" title="释放锁 / 放弃领导权"></a>释放锁 / 放弃领导权</h5></li>
+</ul>
+</blockquote>
+<p>锁的获得者应该能够正确释放已经获得的锁，并且当获得锁的进程宕机时，锁应该自动释放，从而使得其他竞争方可以获得该锁，从而避免出现死锁的状态。</p>
+<p>领导应该可以主动放弃领导权，并且当领导所在进程宕机时，领导权应自动释放，从而使得其他竞争方可以重新竞争领导而避免进入无主状态</p>
+<blockquote>
+<ul>
+<li><h5 id="感知锁释放-领导权的放弃"><a href="#感知锁释放-领导权的放弃" class="headerlink" title="感知锁释放 / 领导权的放弃"></a>感知锁释放 / 领导权的放弃</h5></li>
+</ul>
+</blockquote>
+<p>当获得锁的一方释放锁时，其它对于锁的竞争方需要能够感知到锁的释放，并再次尝试获取锁。</p>
+<p>原来的Leader放弃领导权时，其它参与方应该能够感知该事件，并重新发起选举流程。</p>
+<ul>
+<li><h3 id="非公平领导选举"><a href="#非公平领导选举" class="headerlink" title="非公平领导选举"></a>非公平领导选举</h3></li>
+</ul>
+<p>分布式锁与领导选举的技术要点非常相似，这里以领导选举为例来说明二者的实现原理</p>
+<blockquote>
+<ul>
+<li><h5 id="选主过程"><a href="#选主过程" class="headerlink" title="选主过程"></a>选主过程</h5></li>
+</ul>
+</blockquote>
+<p>假设有三个zk客户端同时竞争leader，这三个客户端同时向zk集群注册临时节点（Ephemeral）且无序类型（Non-sequence）的节点。路径都为 /zkroot/leader (路径名自定义)</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/2ae468645d9a457b8f6a0bc6701ae9e9.jpeg" alt="image"></p>
+<p>由于是无序节点，这三个客户端只会有一个创建成功，其他节点均创建失败。此时，创建成功的客户端1即成功竞选为Leader。其他客户端此时均为Follower。</p>
+<blockquote>
+<ul>
+<li><h5 id="放弃领导权"><a href="#放弃领导权" class="headerlink" title="放弃领导权"></a>放弃领导权</h5></li>
+</ul>
+</blockquote>
+<p>如果Leader打算放弃领导权，直接删除/zkroot/leader节点即可。</p>
+<p>如果Leader进程意外宕机，其与zk间的session也就结束，该临时节点自动删除。</p>
+<p>此时 /zkroot/leader节点不存在了，对于其他竞选的客户端而言，之前的Leader放弃了领导权。</p>
+<blockquote>
+<ul>
+<li><h5 id="感知领导权的放弃"><a href="#感知领导权的放弃" class="headerlink" title="感知领导权的放弃"></a>感知领导权的放弃</h5></li>
+</ul>
+</blockquote>
+<p>创建节点失败的节点，除了成为Follower之外，还会向 /zkroot/leader注册一个Watcher，一旦Leader放弃领导权，节点被删除，所有的FOllower都会收到通知。</p>
+<blockquote>
+<ul>
+<li><h5 id="重新选举"><a href="#重新选举" class="headerlink" title="重新选举"></a>重新选举</h5></li>
+</ul>
+</blockquote>
+<p>感知到旧Leader放弃领导权后，所有的FOllower可以再次发起一轮领导选举：</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/67966be66521475e93bed856ac5584df.jpeg" alt="image"></p>
+<p>新一轮的领导选举方法与最初的领导选举方法完全一样。由于选举结果无法预测，与他们在第一轮选举的顺序无关，所以这种方案才被称为非公平锁</p>
+<blockquote>
+<ul>
+<li><h5 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h5></li>
+</ul>
+</blockquote>
+<p>非公平锁实现简单，每一轮选举方法都一样。竞争方不多的情况下，效率高。若竞争方有上万的话，同时参与竞选就意味着同时会有上万个请求发给zk。由于zk存在单点写的问题，写性能不高。同时Leader放弃领导，zk还需要同时通知上万个FOllower，负载较大。</p>
+<ul>
+<li><h3 id="公平领导选举"><a href="#公平领导选举" class="headerlink" title="公平领导选举"></a>公平领导选举</h3></li>
+</ul>
+<blockquote>
+<ul>
+<li><h5 id="选主过程-1"><a href="#选主过程-1" class="headerlink" title="选主过程"></a>选主过程</h5></li>
+</ul>
+</blockquote>
+<p>公平领导选举中，各客户端创建 /zkroot/leader节点，且类型为临时顺序节点。</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/6789a44c37454f5e9712d0e6ac34bf6e.jpeg" alt="image"></p>
+<p>由于是顺序类型节点，所以各客户端均创建成功。每个客户端会判断自己创建的节点序号是否是当前最小的。如果是，则该客户端成为leader，否则为FOllower。这里客户端1成为leader。</p>
+<blockquote>
+<ul>
+<li><h5 id="放弃领导权-1"><a href="#放弃领导权-1" class="headerlink" title="放弃领导权"></a>放弃领导权</h5></li>
+</ul>
+</blockquote>
+<p>leader如果主动放弃领导权，直接删除其创建的节点即可。</p>
+<p>如果leader所在进程意外宕机，session会话结束，其创建的临时节点会自动删除。</p>
+<blockquote>
+<ul>
+<li><h5 id="感知领导权的放弃-1"><a href="#感知领导权的放弃-1" class="headerlink" title="感知领导权的放弃"></a>感知领导权的放弃</h5></li>
+</ul>
+</blockquote>
+<p>与非公平模式不同，每个FOllower并非都watch由leader创建出来的节点，而是watch刚好比自己序号小的节点。</p>
+<p>一旦leader宕机，/zkroot/leader1删除，客户端2可得到通知。此时客户端3由于watch的是 /zkroot/leader2，所以不会得到通知。</p>
+<blockquote>
+<ul>
+<li><h5 id="重新选举-1"><a href="#重新选举-1" class="headerlink" title="重新选举"></a>重新选举</h5></li>
+</ul>
+</blockquote>
+<p>客户端2得到 /zkroot/leader1被删除的通知后，不会立即成为新的leader。而是先判断自己的序号2是不是当前最小的。如果是最小的，客户端2就会成为新的leader。</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/065670a367bd4a548cb98fe7d990cf57.jpeg" alt="image"></p>
+<p><code>注意：</code>如果客户端1放弃领导权之前，客户端2宕机，客户端3会收到通知。此时客户端3不会立即成为新的leader，而是判断自己的序号是否是最小的。由于此时 /zkroot/leader1还在，因此客户端3不会成为新的leader，并向 /zkroot/leader1节点创建watch。</p>
+<p><img src="https://gitee.com/chenssy/blog-home/raw/master/image/series-images/zookeeper/361658e79aa8421db21fcbe4811f4d35.jpeg" alt="image"></p>
+<blockquote>
+<ul>
+<li><h5 id="小结-1"><a href="#小结-1" class="headerlink" title="小结"></a>小结</h5></li>
+</ul>
+</blockquote>
+<p>实现相对复杂。</p>
+<p>扩展性好，每个客户端都只watch一个节点且每次节点被删除只会通知一个客户端。</p>
+<p>旧leader放弃领导权时，其他客户端按节点序号的先后顺序成为新leader，这也是公平模式的由来。</p>
+<p>延迟相对非公平模式要高，因为它必须等待特定节点得到通知才能选出新的leader</p>
+<ul>
+<li><h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3></li>
+</ul>
+<p>zk的领导选举或分布式锁的实现均基于zk节点的特性和通知机制。</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
@@ -84,7 +210,7 @@
     </div>
     
         <div class="side">
-            
+            <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#分布式锁与领导选举关键点"><span class="toc-number">1.</span> <span class="toc-text">分布式锁与领导选举关键点</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#最多一个获取锁-成为Leader"><span class="toc-number">1.0.1.</span> <span class="toc-text">最多一个获取锁 / 成为Leader</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#锁重入-确认自己是Leader"><span class="toc-number">1.0.2.</span> <span class="toc-text">锁重入 / 确认自己是Leader</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#释放锁-放弃领导权"><span class="toc-number">1.0.3.</span> <span class="toc-text">释放锁 / 放弃领导权</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#感知锁释放-领导权的放弃"><span class="toc-number">1.0.4.</span> <span class="toc-text">感知锁释放 / 领导权的放弃</span></a></li></ol></li></ol><li class="toc-item toc-level-3"><a class="toc-link" href="#非公平领导选举"><span class="toc-number">2.</span> <span class="toc-text">非公平领导选举</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#选主过程"><span class="toc-number">2.0.1.</span> <span class="toc-text">选主过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#放弃领导权"><span class="toc-number">2.0.2.</span> <span class="toc-text">放弃领导权</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#感知领导权的放弃"><span class="toc-number">2.0.3.</span> <span class="toc-text">感知领导权的放弃</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#重新选举"><span class="toc-number">2.0.4.</span> <span class="toc-text">重新选举</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#小结"><span class="toc-number">2.0.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#公平领导选举"><span class="toc-number">3.</span> <span class="toc-text">公平领导选举</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#选主过程-1"><span class="toc-number">3.0.1.</span> <span class="toc-text">选主过程</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#放弃领导权-1"><span class="toc-number">3.0.2.</span> <span class="toc-text">放弃领导权</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#感知领导权的放弃-1"><span class="toc-number">3.0.3.</span> <span class="toc-text">感知领导权的放弃</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#重新选举-1"><span class="toc-number">3.0.4.</span> <span class="toc-text">重新选举</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#小结-1"><span class="toc-number">3.0.5.</span> <span class="toc-text">小结</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li>
         </div>
     
 </div>
