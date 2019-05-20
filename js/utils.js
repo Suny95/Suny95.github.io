@@ -51,12 +51,12 @@
                 doc.title = docText;
             }, 1000);
         } else {
-            doc.title = '藏起来了d(`x_x)b';
+            doc.title = 'Sunny___';
             if (status) {
                 clearTimeout(status);
             }
         }
     }, false);
     // 初始化页面状态
-    // doc.title = '吕钒的后花园';
+    // doc.title = '朝阳的博客';
 }());
